@@ -1,10 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
 import NotExist from "./NotExist";
 import { UserPage } from "../pages/User/UserPage";
-import { GuestPage } from "../pages/Guest/GuestPage";
 import { Dashboard } from "../components/dashboard/Dashboard";
 
-const userRoutes = [
+const router = createBrowserRouter([
     {
         path: "/",
         element: <UserPage />,
@@ -15,18 +14,6 @@ const userRoutes = [
             }
         ]
     },
-]
-
-const guestRoutes = [
-    {
-        path: "/",
-        element: <GuestPage />,
-    }
-]
-const routes = true ? userRoutes : guestRoutes
-
-const router = createBrowserRouter([
-    ...routes,
     {
         path: "*",
         element: <NotExist />

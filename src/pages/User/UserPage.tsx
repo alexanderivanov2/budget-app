@@ -1,4 +1,4 @@
-import { MobileMenu } from '../../components/mobileMenu/mobileMenu'
+import { MobileMenu } from '../../components/mobileMenu/MobileMenu'
 import Sidebar from '../../components/sidebar/Sidebar'
 import { Outlet } from 'react-router-dom'
 
