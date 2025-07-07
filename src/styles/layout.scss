@@ -39,15 +39,17 @@ body {
     &--mobile {
         display: block;
         position: relative;
-
+        
         .dashboard {
             background-color: skyblue;
             height: 100%;
             min-height: 100vh;
         }
-
+        
         .mobile-menu {
             position: fixed;
+            width: 100%;
+            padding: 1rem;
             bottom: 0;
             background-color: silver;
         }
