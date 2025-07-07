@@ -29,7 +29,7 @@ body {
         background-color: silver;
     }
 
-    .dashboard {
+    .dashboard, .transactions, .statistics {
         flex: 1 1 75%;
         background-color: skyblue;
         justify-content: stretch;
