@@ -4,10 +4,11 @@ import { Outlet } from 'react-router-dom'
 import useDeviceMediaQuery from '../../hooks/useDeviceMediaQuery'
 
 export const UserPage = () => {
-  const { isMobile, isTablet } = useDeviceMediaQuery();
+  const { isMobile } = useDeviceMediaQuery();
+
+  const wrapperClass = isMobile ? 'user-layout--mobile' : 'user-layout';
   return (
-    <div>
-      { isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop' }
+    <div className={wrapperClass}>
         { !isMobile && <Sidebar /> }
         <Outlet />
         { isMobile  && <MobileMenu /> }

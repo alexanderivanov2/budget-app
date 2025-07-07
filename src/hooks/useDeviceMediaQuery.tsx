@@ -36,7 +36,7 @@ const useDeviceMediaQuery = () => {
         return () => window.removeEventListener('resize', handleWindowResize);
     }, [])
 
-    return devices
+    return devices;
 }
 
-export default useDeviceMediaQuery
+export default useDeviceMediaQuery;
