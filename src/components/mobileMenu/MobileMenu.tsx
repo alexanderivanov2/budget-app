@@ -1,5 +1,5 @@
 export const MobileMenu = () => {
   return (
-    <div>MobileMenu</div>
+    <div className="mobile-menu">MobileMenu</div>
   )
 }
