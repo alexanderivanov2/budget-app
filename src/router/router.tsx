@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import NotExist from "./NotExist";
-import { UserPage } from "../pages/User/UserPage";
+import { UserPage } from "../pages/user/UserPage";
 import { Dashboard } from "../components/dashboard/Dashboard";
 
 const router = createBrowserRouter([
