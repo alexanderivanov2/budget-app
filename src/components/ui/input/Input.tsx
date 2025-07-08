@@ -3,6 +3,8 @@ interface Props {
     id: string,
     className: string,
     type: string,
+    value?: string | number,
+    placeholder?: string,
     disabled?: boolean,
     ref?: React.RefObject<HTMLInputElement>,
     onClick?: () => void,
