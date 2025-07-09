@@ -1,8 +1,8 @@
 import React from 'react'
 
 interface Props {
-    for: string,
-    className: string,
+    htmlFor: string,
+    className?: string,
     children: React.ReactNode,
 }
 
