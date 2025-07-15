@@ -1,9 +1,9 @@
 import React  from 'react'
 interface Props {
-    id: string,
+    id?: string,
     className?: string,
-    type: string,
-    name: string,
+    type?: string,
+    name?: string,
     value?: string | number,
     placeholder?: string,
     disabled?: boolean,

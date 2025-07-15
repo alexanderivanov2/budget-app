@@ -7,13 +7,13 @@ interface Props {
     label: {
         htmlFor: string;
         className?: string;
-        label: string;
+        label?: string | React.ReactNode;
     };
-    input: {
+    input?: {
         id: string,
         className?: string,
         type: string,
-        name: string;
+        name?: string;
         value?: string | number,
         placeholder?: string,
         disabled?: boolean,
@@ -24,17 +24,19 @@ interface Props {
         onInput?: (e: React.FormEvent<HTMLInputElement>) => void,
         onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void,
     };
-    error: {
+    error?: {
         message?: string;
         className?: string;
-    }
+    },
+    className?: string;
+    children?: React.ReactNode;
 }
 
-const FormField = ({ label, input, error }: Props) => {
+const FormField: React.FC<Props> = ({ label, input, error, children }: Props) => {
     return (
         <div className='form-field'>
             <Label htmlFor={label.htmlFor} className={label.className}>{label.label}</Label>
-            <Input {...input} />
+            {children || input && <Input {...input} />}
             {error?.message && <ErrorOutput className={error.className}>{error.message}</ErrorOutput>}
         </div>
     )
