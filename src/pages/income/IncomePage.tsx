@@ -1,9 +1,11 @@
-import React from 'react'
-import Input from '../../components/ui/input/Input'
+import TransactionForm from '../transactions/TransactionForm'
 
 const IncomePage = () => {
   return (
-    <div>IncomePage</div>
+    <div>
+      <h1>IncomePage</h1>
+      <TransactionForm />
+    </div>
   )
 }
 
