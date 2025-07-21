@@ -62,8 +62,6 @@ const createInitialForm = (): TransactionForm => {
 const useTransactionForm = () => {
     const [transactionForm, setTransactionForm] = useState<TransactionForm>(() => createInitialForm());
 
-    const formKeys = FORM_KEYS;
-
     const dateInputValue = dateToStringValue(transactionForm.date.value);
 
     const validateInput = (key: FormKey, value: string | Date) => {
