@@ -2,13 +2,16 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import router from './router/router'
-import "./styles/layout.scss"
+import "./styles/index.scss"
 import DataProvider from './context/DataContext';
+import ThemeProvider from './context/ThemeContext';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <DataProvider>
-      <RouterProvider router={router}></RouterProvider>
+      <ThemeProvider>
+        <RouterProvider router={router}></RouterProvider>
+      </ThemeProvider>
     </DataProvider>
   </StrictMode>,
 )
