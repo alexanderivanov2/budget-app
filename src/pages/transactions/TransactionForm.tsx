@@ -2,6 +2,8 @@ import type React from 'react';
 import FormField from '../../components/ui/input/FormField';
 import useTransactionForm from '../../hooks/useTransactionForm';
 import { useLocation } from 'react-router-dom';
+// import { useContext } from 'react';
+// import { useDataContext } from '../../context/DataContext';
 
 const SELECT_CATEGORY_DATA = {
     income: {
@@ -19,10 +21,12 @@ const SELECT_CATEGORY_DATA = {
 }
 
 const TransactionForm = () => {
-    const { form: transactionForm, selectedDate, handleSubmit, handleChange, handleBlur } = useTransactionForm();
     const location = useLocation();
     const transactionFormType = location.pathname.includes('expenses') ? 'expense' : 'income';
+    const { form: transactionForm, selectedDate, handleSubmit, handleChange, handleBlur } = useTransactionForm(transactionFormType);
     const selectCategoryData = SELECT_CATEGORY_DATA[transactionFormType];
+    // const { incomeData, dataDispatch } = useDataContext();
+
     return (
         <form onSubmit={handleSubmit}>
             <FormField
