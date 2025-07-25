@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { isNumber } from "../utils/validations";
 import { dateToStringValue, convertStringDateToDate } from "../utils/convert";
+import { useDataContext, type TranseferData } from "../context/DataContext";
 
 const FORM_KEYS = ['budget', 'amount', 'description', 'date', 'category'] as const;
 type FormKey = typeof FORM_KEYS[number];
@@ -59,9 +60,9 @@ const createInitialForm = (): TransactionForm => {
     return initialForm;
 }
 
-const useTransactionForm = () => {
+const useTransactionForm = (formType: string) => {
     const [transactionForm, setTransactionForm] = useState<TransactionForm>(() => createInitialForm());
-
+    const { dataDispatch } = useDataContext();
     const dateInputValue = dateToStringValue(transactionForm.date.value);
 
     const validateInput = (key: FormKey, value: string | Date) => {
@@ -98,7 +99,7 @@ const useTransactionForm = () => {
 
             if (!validated.isValid) {
                 const errorMessage = validated.errorMessage;
-       
+
                 extractObject[key as FormKey] = {
                     ...value,
                     errorMessage: errorMessage
@@ -173,6 +174,12 @@ const useTransactionForm = () => {
             return;
         }
         // TODO SUBMIT AFTER IMPLEMENTATE localStorageStore
+        const actionType = formType === 'expense' ? 'addExpense' : 'addIncome';
+
+        const payload = Object.fromEntries(Object.entries(transactionForm).map(([key, field]) => [key, field.value])) as TranseferData
+
+        dataDispatch({ type: actionType, payload });
+
         handleResetForm();
     }
 
