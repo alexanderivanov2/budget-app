@@ -1,7 +1,3 @@
-*, *::before, *::after {
-    box-sizing: border-box;
-}
-
 body {
     padding: 0;
     margin: 0;
@@ -19,19 +15,32 @@ body {
 .user-layout {
     display: flex;
 
-    &, &--mobile {
+    &,
+    &--mobile {
         height: 100%;
         min-height: 100vh;
     }
 
     .sidebar {
-        flex: 1 1 15%;
-        background-color: silver;
+        background-color: var(--color-surface);
+        transition: max-width .5s ease-out, flex-basis .5s ease-out;
+
+        &-close {
+            max-width: 50px;
+            flex: 1 1 5%;
+        }
+
+        &-open {
+            flex: 1 1 15%;
+            max-width: 250px;
+        }
     }
 
-    .dashboard, .transactions, .statistics {
+    .dashboard,
+    .transactions,
+    .statistics {
         flex: 1 1 75%;
-        background-color: skyblue;
+        background-color: var(--color-bg);
         justify-content: stretch;
         align-items: stretch;
     }
@@ -39,19 +48,19 @@ body {
     &--mobile {
         display: block;
         position: relative;
-        
+
         .dashboard {
-            background-color: skyblue;
+            background-color: var(--color-bg);
             height: 100%;
             min-height: 100vh;
         }
-        
+
         .mobile-menu {
             position: fixed;
             width: 100%;
             padding: 1rem;
             bottom: 0;
-            background-color: silver;
+            background-color: var(--color-surface);
         }
     }
 }
