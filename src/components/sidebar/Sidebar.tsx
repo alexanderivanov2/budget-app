@@ -1,9 +1,14 @@
 import { Link } from "react-router-dom"
+import { useThemeContext } from "../../context/ThemeContext"
+import { useState } from "react";
 
 const Sidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { theme, handleThemeChange } = useThemeContext();
+
   return (
-    <div className="sidebar">
-      Sidebar
+    <div className={`sidebar ${isOpen ? 'sidebar-open' : 'sidebar-close'}`}>
+      <button onClick={handleThemeChange}> Theme {theme}</button>
       <nav>
         <Link to="/">Dashboard</Link>
         <br />
@@ -17,6 +22,7 @@ const Sidebar = () => {
         </div>
         <Link to="/statistics">Statistics</Link>
       </nav>
+      <button onClick={() => setIsOpen(prevIsOpen => !prevIsOpen)}>{ isOpen ? '<<' : '>>'}</button>
     </div>
   )
 }
