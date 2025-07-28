@@ -1,30 +1,30 @@
-import { Link } from "react-router-dom"
-import { useThemeContext } from "../../context/ThemeContext"
 import { useState } from "react";
+import s from './Sidebar.module.scss';
+import ThemeToggle from "../ui/ThemeToggle";
+import SidebarDesktopNavigation from "./SidebarDesktopNavigation";
+import { ChevronsLeft, ChevronsRight, DollarSign } from "react-feather";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { theme, handleThemeChange } = useThemeContext();
 
   return (
-    <div className={`sidebar ${isOpen ? 'sidebar-open' : 'sidebar-close'}`}>
-      <button onClick={handleThemeChange}> Theme {theme}</button>
-      <nav>
-        <Link to="/">Dashboard</Link>
-        <br />
-        <div>
-          <Link to="/transactions">Transactions</Link>
-          <div>
-            <Link to="/transactions/income">Income</Link>
-            <br />
-            <Link to="/transactions/expenses">Expenses</Link>
-          </div>
+    <div className={`${s.sidebar} ${isOpen ? s['sidebar-open'] : s['sidebar-close']}`}>
+      <h1 className={s['sidebar-title']}> {isOpen ? 'Finance' : <DollarSign size={30} />}</h1>
+      <SidebarDesktopNavigation open={isOpen} />
+      <div className={s['sidebar-bottom']}>
+        <div className={`s['theme-switch'] sidebar-theme-switch`}>
+          <ThemeToggle text="Switch"/>
         </div>
-        <Link to="/statistics">Statistics</Link>
-      </nav>
-      <button onClick={() => setIsOpen(prevIsOpen => !prevIsOpen)}>{ isOpen ? '<<' : '>>'}</button>
+        <button
+          className={`${s['sidebar-menu-size-btn']} ${isOpen ? '' : s['close']}`}
+          onClick={() => setIsOpen(prevIsOpen => !prevIsOpen)}
+        >
+          {isOpen ? < ChevronsLeft size={26} /> : <ChevronsRight size={30} />}
+          <p className={s['open-text']}>Minimize</p>
+        </button>
+      </div>
     </div>
   )
 }
 
-export default Sidebar
+export default Sidebar;
