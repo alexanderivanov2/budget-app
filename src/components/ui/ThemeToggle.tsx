@@ -13,7 +13,6 @@ const ThemeToggle: React.FC<Props> = ({ text }) => {
             {theme === 'light' ? <Sun size={24} /> : <Moon size={24} />}
             { text ? <p className='theme-switch-text'>{text}</p> : ''}
         </button>
-
     )
 }
 

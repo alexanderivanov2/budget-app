@@ -21,21 +21,6 @@ body {
         min-height: 100vh;
     }
 
-    .sidebar {
-        background-color: var(--color-surface);
-        transition: max-width .5s ease-out, flex-basis .5s ease-out;
-
-        &-close {
-            max-width: 50px;
-            flex: 1 1 5%;
-        }
-
-        &-open {
-            flex: 1 1 15%;
-            max-width: 250px;
-        }
-    }
-
     .dashboard,
     .transactions,
     .statistics {
@@ -62,5 +47,16 @@ body {
             bottom: 0;
             background-color: var(--color-surface);
         }
+    }
+}
+
+.sidebar-theme-switch {
+    width: 100%;
+
+    .theme-switch {
+        width: 100%;
+        background-color: transparent;
+        border: none;
+        color: var(--color-text-primary);
     }
 }
