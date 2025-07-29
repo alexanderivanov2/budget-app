@@ -3,8 +3,8 @@ import NotExist from "./NotExist";
 import { UserPage } from "../pages/user/UserPage";
 import { Dashboard } from "../components/dashboard/Dashboard";
 import TransactionsPage from "../pages/transactions/TransactionsPage";
-import IncomePage from "../pages/income/IncomePage";
-import ExpensePage from "../pages/expenses/ExpensePage";
+import IncomePage from "../pages/transactions/income/IncomePage";
+import ExpensePage from "../pages/transactions/expenses/ExpensePage";
 import { StatisticsPage } from "../pages/statistics/StatisticsPage";
 
 const router = createBrowserRouter([

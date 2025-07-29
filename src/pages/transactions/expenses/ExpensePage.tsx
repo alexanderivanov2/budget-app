@@ -1,4 +1,4 @@
-import TransactionForm from '../transactions/TransactionForm'
+import TransactionForm from '../TransactionForm'
 
 const ExpensePage = () => {
   return (

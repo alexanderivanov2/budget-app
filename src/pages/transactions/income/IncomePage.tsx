@@ -1,8 +1,8 @@
-import TransactionForm from '../transactions/TransactionForm'
+import TransactionForm from '../TransactionForm'
 
 const IncomePage = () => {
   return (
-    <div>
+    <div className='transaction transaction-income'>
       <h1>IncomePage</h1>
       <TransactionForm />
     </div>
