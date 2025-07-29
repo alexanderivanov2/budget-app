@@ -3,8 +3,7 @@ import TransactionForm from '../TransactionForm'
 const ExpensePage = () => {
   return (
     <div>
-      <h1>Expense</h1>
-      <TransactionForm />
+      <TransactionForm title='Expense' />
     </div>
   )
 }

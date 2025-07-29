@@ -1,0 +1,53 @@
+.form-income,
+.form-expense {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+
+    max-width: 250px;
+    width: 100%;
+    padding: 10px;
+
+    margin: 0 auto;
+    
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border-radius: 8px;
+
+    .transaction-form-title {
+        margin: 0;
+        font-size: 18px;
+        color: var(--color-text-primary);
+        align-self: center;
+    }
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 3px;
+        width: 100%;
+
+        input, textarea, option, select {
+            width: 100%;
+            padding: 10px 5px;
+            border: none;
+            outline: none;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .transaction-error {
+            color: var(--color-error);
+            font-size: 14px;
+            &::before {
+                content: '*'
+            }
+        }
+    }
+}

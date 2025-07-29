@@ -2,8 +2,6 @@ import type React from 'react';
 import FormField from '../../components/ui/input/FormField';
 import useTransactionForm from '../../hooks/useTransactionForm';
 import { useLocation } from 'react-router-dom';
-// import { useContext } from 'react';
-// import { useDataContext } from '../../context/DataContext';
 
 const SELECT_CATEGORY_DATA = {
     income: {
@@ -20,15 +18,19 @@ const SELECT_CATEGORY_DATA = {
     },
 }
 
-const TransactionForm = () => {
+interface Props {
+    title?: string;
+}
+
+const TransactionForm: React.FC<Props> = ({ title }) => {
     const location = useLocation();
     const transactionFormType = location.pathname.includes('expenses') ? 'expense' : 'income';
     const { form: transactionForm, selectedDate, handleSubmit, handleChange, handleBlur } = useTransactionForm(transactionFormType);
     const selectCategoryData = SELECT_CATEGORY_DATA[transactionFormType];
-    // const { incomeData, dataDispatch } = useDataContext();
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className={`form-${transactionFormType}`}>
+            {title && <h6 className='transaction-form-title'>{title}</h6>}
             <FormField
                 label={{
                     htmlFor: 'transactionBudget',
@@ -37,7 +39,7 @@ const TransactionForm = () => {
                 }}
                 error={{
                     message: transactionForm.budget.errorMessage,
-                    className: 'transcation-budget-error'
+                    className: 'transaction-error transcation-budget-error'
                 }}
                 className='transaction-form-field'
             >
@@ -66,7 +68,7 @@ const TransactionForm = () => {
                 }}
                 error={{
                     message: transactionForm.amount.errorMessage,
-                    className: 'transcation-amount-error'
+                    className: 'transaction-error transcation-amount-error'
                 }}
                 className='transaction-form-field'
             />
@@ -95,7 +97,7 @@ const TransactionForm = () => {
                 }}
                 error={{
                     message: transactionForm.date.errorMessage,
-                    className: 'transcation-date-error'
+                    className: 'transaction-error transcation-date-error'
                 }}
                 className='transaction-form-field'
                 input={{
@@ -115,7 +117,7 @@ const TransactionForm = () => {
                 }}
                 error={{
                     message: transactionForm.category.errorMessage,
-                    className: `transcation-${selectCategoryData.className}-error`
+                    className: `transaction-error transcation-${selectCategoryData.className}-error`
                 }}
                 className='transaction-form-field'
             >
