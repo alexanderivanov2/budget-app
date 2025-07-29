@@ -1,0 +1,23 @@
+.transactions {
+    flex: 1 1 75%;
+    background-color: var(--color-bg);
+    justify-content: stretch;
+    align-items: stretch;
+}
+
+.transactions-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+
+    padding: 25px;
+
+    a {
+        text-decoration: none;
+        color: var(--color-text-primary);
+
+        &.active {
+            color: var(--color-secondary);
+        }
+    }
+}
