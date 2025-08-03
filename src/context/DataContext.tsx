@@ -1,32 +1,10 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from "react";
-
-export interface TranseferData {
-    amount: string,
-    date: Date,
-    budget: string,
-    category: string,
-    description?: string
-}
-
-interface IncomeData extends TranseferData {
-    type: 'income',
-}
-
-interface ExpenseData extends TranseferData {
-    type: 'expense'
-}
-
-type Action = { type: 'addIncome'; payload: Omit<IncomeData, 'type'> } | { type: 'addExpense'; payload: Omit<ExpenseData, 'type'> }
-
-interface DataContextType {
-    incomeData: IncomeData[],
-    expenseData: ExpenseData[],
-    dataDispatch: React.Dispatch<Action>
-}
+import type { Action, DataContextType, State } from "./types/DataContextTypes";
 
 const DataContext = createContext<DataContextType>({
-    incomeData: [],
-    expenseData: [],
+    transactions: {},
+    incomeData: {},
+    expenseData: {},
     dataDispatch: () => { }
 });
 
@@ -40,47 +18,86 @@ interface Props {
     children: React.ReactNode;
 }
 
-type State = { incomeData: IncomeData[]; expenseData: ExpenseData[]; };
+const getYearMonthDay = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    return { year, month, day }
+}
 
 const dataReducer = (state: State, action: Action) => {
     switch (action.type) {
         case ('addIncome'): {
-            const newIncomeData: IncomeData = {
-                ...action.payload,
-                type: 'income',
+            const { year, month, day } = getYearMonthDay(action.payload.date);
+            const incomeDataItem = {
+                id: action.payload.id,
+                date: action.payload.date
             }
-            return {
-                ...state,
-                incomeData: [
-                    ...state.incomeData,
-                    newIncomeData
-                ]
+            state.transactions = { ...state.transactions, [action.payload.id]: action.payload }
+
+            const isRecordExist = state.incomeData?.[year]?.[month]?.[day]?.find((item) => item.id === incomeDataItem.id);
+            if (!isRecordExist) {
+                return {
+                    ...state,
+                    incomeData: {
+                        ...state.incomeData,
+                        [year]: {
+                            ...((state.incomeData[year]) ?? {}),
+                            [month]: {
+                                ...((state.incomeData[year]?.[month]) ?? {}),
+                                [day]: state.incomeData[year]?.[month]?.[day] ? [...state.incomeData[year][month][day], incomeDataItem] : [incomeDataItem]
+                            }
+                        }
+                    }
+                }
             }
+            return { ...state }
         }
         case ('addExpense'): {
-            const newExpenseData: ExpenseData = {
-                ...action.payload,
-                type: 'expense',
-            };
-
-            return {
-                ...state,
-                expenseData: [
-                    ...state.expenseData,
-                    newExpenseData,
-                ]
+            const { year, month, day } = getYearMonthDay(action.payload.date);
+            const expenseDataItem = {
+                id: action.payload.id,
+                date: action.payload.date,
             }
+
+            state.transactions = {
+                ...state.transactions, [action.payload.id]: action.payload,
+            }
+
+            const isRecordExist = state.expenseData?.[year]?.[month]?.[day]?.find((item) => item.id === expenseDataItem.id);
+
+            if (!isRecordExist) {
+                return {
+                    ...state,
+                    expenseData: {
+                        ...state.expenseData,
+                        [year]: {
+                            ...((state.expenseData[year]) ?? {}),
+                            [month]: {
+                                ...((state.expenseData[year]?.[month]) ?? {}),
+                                [day]: [
+                                    ...((state.expenseData[year]?.[month]?.[day]) ?? []),
+                                    expenseDataItem
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+            return { ...state }
         }
     }
-
     return state
 }
 
+const transactionsJSONData = localStorage.getItem('transactionsData');
 const incomeJSONData = localStorage.getItem('incomeData');
 const expenseJSONData = localStorage.getItem('expenseData');
 const initialDataReducer: State = {
-    incomeData: incomeJSONData ? JSON.parse(incomeJSONData) : [],
-    expenseData: expenseJSONData ? JSON.parse(expenseJSONData) : [],
+    transactions: transactionsJSONData ? JSON.parse(transactionsJSONData) : {},
+    incomeData: incomeJSONData ? JSON.parse(incomeJSONData) : {},
+    expenseData: expenseJSONData ? JSON.parse(expenseJSONData) : {},
 }
 
 const DataProvider: React.FC<Props> = ({ children }) => {
@@ -93,8 +110,9 @@ const DataProvider: React.FC<Props> = ({ children }) => {
 
     useEffect(() => {
         const handleWindowClose = () => {
-            dataRef.current.incomeData.length && localStorage.setItem('incomeData', JSON.stringify(dataRef.current.incomeData));
-            dataRef.current.expenseData.length && localStorage.setItem('expenseData', JSON.stringify(dataRef.current.expenseData));
+            Object.keys(dataRef.current.incomeData).length && localStorage.setItem('incomeData', JSON.stringify(dataRef.current.incomeData));
+            Object.keys(dataRef.current.expenseData).length && localStorage.setItem('expenseData', JSON.stringify(dataRef.current.expenseData));
+            Object.keys(dataRef.current.transactions).length && localStorage.setItem('transactionsData', JSON.stringify(dataRef.current.transactions));
         }
 
         window.addEventListener('beforeunload', handleWindowClose);
@@ -105,7 +123,7 @@ const DataProvider: React.FC<Props> = ({ children }) => {
     }, []);
 
     return (
-        <DataContext.Provider value={{ incomeData: data.incomeData, expenseData: data.expenseData, dataDispatch: dispatch }}>
+        <DataContext.Provider value={{ transactions: data.transactions, incomeData: data.incomeData, expenseData: data.expenseData, dataDispatch: dispatch }}>
             {children}
         </DataContext.Provider>
     )
