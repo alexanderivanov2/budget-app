@@ -1,7 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
 import { isNumber } from "../utils/validations";
 import { dateToStringValue, convertStringDateToDate } from "../utils/convert";
-import { useDataContext, type TranseferData } from "../context/DataContext";
+import { useDataContext } from "../context/DataContext";
+import type { TransferData } from "../context/types/DataContextTypes";
 
 const FORM_KEYS = ['budget', 'amount', 'description', 'date', 'category'] as const;
 type FormKey = typeof FORM_KEYS[number];
@@ -60,7 +62,7 @@ const createInitialForm = (): TransactionForm => {
     return initialForm;
 }
 
-const useTransactionForm = (formType: string) => {
+const useTransactionForm = (formType: 'income' | 'expense') => {
     const [transactionForm, setTransactionForm] = useState<TransactionForm>(() => createInitialForm());
     const { dataDispatch } = useDataContext();
     const dateInputValue = dateToStringValue(transactionForm.date.value);
@@ -176,9 +178,11 @@ const useTransactionForm = (formType: string) => {
         // TODO SUBMIT AFTER IMPLEMENTATE localStorageStore
         const actionType = formType === 'expense' ? 'addExpense' : 'addIncome';
 
-        const payload = Object.fromEntries(Object.entries(transactionForm).map(([key, field]) => [key, field.value])) as TranseferData
+        const payload = Object.fromEntries(Object.entries(transactionForm).map(([key, field]) => [key, field.value])) as TransferData
 
-        dataDispatch({ type: actionType, payload });
+        const id = uuidv4();
+        dataDispatch({ type: actionType, payload: { ...payload, id, type: formType } });
+
 
         handleResetForm();
     }
