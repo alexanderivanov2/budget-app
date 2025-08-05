@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from "react";
 import type { Action, DataContextType, State } from "./types/DataContextTypes";
+import { getYearMonthDay } from "../utils/dateUtils";
 
 const DataContext = createContext<DataContextType>({
     transactions: {},
@@ -18,13 +19,7 @@ interface Props {
     children: React.ReactNode;
 }
 
-const getYearMonthDay = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
 
-    return { year, month, day }
-}
 
 const dataReducer = (state: State, action: Action) => {
     switch (action.type) {
