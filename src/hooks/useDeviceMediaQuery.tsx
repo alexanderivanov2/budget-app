@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { MOBILE_MEDIA_QUERY, TABLET_MEDIA_QUERY, DESKTOP_MEDIA_QUERY } from '../constants/DEVICES'
+import { MOBILE_MEDIA_QUERY, TABLET_MEDIA_QUERY } from '../constants/DEVICES'
 
 const initialDevices = {
     isMobile: false,
