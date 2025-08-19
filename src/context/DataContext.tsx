@@ -6,6 +6,7 @@ const DataContext = createContext<DataContextType>({
     transactions: {},
     incomeData: {},
     expenseData: {},
+    transactionsCount: 0,
     dataDispatch: () => { }
 });
 
@@ -18,8 +19,6 @@ export const useDataContext = () => {
 interface Props {
     children: React.ReactNode;
 }
-
-
 
 const dataReducer = (state: State, action: Action) => {
     switch (action.type) {
@@ -98,6 +97,7 @@ const initialDataReducer: State = {
 const DataProvider: React.FC<Props> = ({ children }) => {
     const [data, dispatch] = useReducer(dataReducer, initialDataReducer);
     const dataRef = useRef(data);
+    const transactionsCount = Object.keys(data.transactions).length;
 
     useEffect(() => {
         dataRef.current = data;
@@ -118,7 +118,7 @@ const DataProvider: React.FC<Props> = ({ children }) => {
     }, []);
 
     return (
-        <DataContext.Provider value={{ transactions: data.transactions, incomeData: data.incomeData, expenseData: data.expenseData, dataDispatch: dispatch }}>
+        <DataContext.Provider value={{ transactions: data.transactions, incomeData: data.incomeData, expenseData: data.expenseData, transactionsCount, dataDispatch: dispatch }}>
             {children}
         </DataContext.Provider>
     )

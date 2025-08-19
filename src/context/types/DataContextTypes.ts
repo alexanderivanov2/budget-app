@@ -26,6 +26,7 @@ export interface DataContextType {
     transactions: Record<string, TransferData>,
     incomeData: Data,
     expenseData: Data,
+    transactionsCount: number;
     dataDispatch: React.Dispatch<Action>
 }
 
