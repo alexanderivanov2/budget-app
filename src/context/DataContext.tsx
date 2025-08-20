@@ -7,6 +7,7 @@ const DataContext = createContext<DataContextType>({
     incomeData: {},
     expenseData: {},
     transactionsCount: 0,
+    initialDate: new Date(),
     dataDispatch: () => { }
 });
 
@@ -81,6 +82,10 @@ const dataReducer = (state: State, action: Action) => {
             }
             return { ...state }
         }
+        case ('setDate'): {
+
+            return { ...state }
+        }
     }
     return state
 }
@@ -92,6 +97,7 @@ const initialDataReducer: State = {
     transactions: transactionsJSONData ? JSON.parse(transactionsJSONData) : {},
     incomeData: incomeJSONData ? JSON.parse(incomeJSONData) : {},
     expenseData: expenseJSONData ? JSON.parse(expenseJSONData) : {},
+    initialDate: new Date(),
 }
 
 const DataProvider: React.FC<Props> = ({ children }) => {
@@ -118,7 +124,7 @@ const DataProvider: React.FC<Props> = ({ children }) => {
     }, []);
 
     return (
-        <DataContext.Provider value={{ transactions: data.transactions, incomeData: data.incomeData, expenseData: data.expenseData, transactionsCount, dataDispatch: dispatch }}>
+        <DataContext.Provider value={{ transactions: data.transactions, incomeData: data.incomeData, expenseData: data.expenseData, transactionsCount, initialDate: data.initialDate, dataDispatch: dispatch }}>
             {children}
         </DataContext.Provider>
     )
