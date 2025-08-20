@@ -6,6 +6,8 @@ const DataContext = createContext<DataContextType>({
     transactions: {},
     incomeData: {},
     expenseData: {},
+    transactionsCount: 0,
+    initialDate: new Date(),
     dataDispatch: () => { }
 });
 
@@ -18,8 +20,6 @@ export const useDataContext = () => {
 interface Props {
     children: React.ReactNode;
 }
-
-
 
 const dataReducer = (state: State, action: Action) => {
     switch (action.type) {
@@ -82,6 +82,10 @@ const dataReducer = (state: State, action: Action) => {
             }
             return { ...state }
         }
+        case ('setDate'): {
+
+            return { ...state }
+        }
     }
     return state
 }
@@ -93,11 +97,13 @@ const initialDataReducer: State = {
     transactions: transactionsJSONData ? JSON.parse(transactionsJSONData) : {},
     incomeData: incomeJSONData ? JSON.parse(incomeJSONData) : {},
     expenseData: expenseJSONData ? JSON.parse(expenseJSONData) : {},
+    initialDate: new Date(),
 }
 
 const DataProvider: React.FC<Props> = ({ children }) => {
     const [data, dispatch] = useReducer(dataReducer, initialDataReducer);
     const dataRef = useRef(data);
+    const transactionsCount = Object.keys(data.transactions).length;
 
     useEffect(() => {
         dataRef.current = data;
@@ -118,7 +124,7 @@ const DataProvider: React.FC<Props> = ({ children }) => {
     }, []);
 
     return (
-        <DataContext.Provider value={{ transactions: data.transactions, incomeData: data.incomeData, expenseData: data.expenseData, dataDispatch: dispatch }}>
+        <DataContext.Provider value={{ transactions: data.transactions, incomeData: data.incomeData, expenseData: data.expenseData, transactionsCount, initialDate: data.initialDate, dataDispatch: dispatch }}>
             {children}
         </DataContext.Provider>
     )

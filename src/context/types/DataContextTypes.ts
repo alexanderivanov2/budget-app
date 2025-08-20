@@ -8,7 +8,7 @@ export interface TransferData {
     type: 'income' | 'expense',
 }
 
-export type Action = { type: 'addIncome' | 'addExpense'; payload: TransferData }
+export type Action = { type: 'addIncome' | 'addExpense' | 'setDate'; payload: TransferData }
 
 export type typeData = {
     id: string;
@@ -24,9 +24,11 @@ export interface Data {
 
 export interface DataContextType {
     transactions: Record<string, TransferData>,
-    incomeData: Data,
-    expenseData: Data,
-    dataDispatch: React.Dispatch<Action>
+    incomeData: Data;
+    expenseData: Data;
+    transactionsCount: number;
+    initialDate: Date;
+    dataDispatch: React.Dispatch<Action>;
 }
 
-export type State = { transactions: Record<string, TransferData>, incomeData: Data; expenseData: Data; };
+export type State = { transactions: Record<string, TransferData>, incomeData: Data; expenseData: Data; initialDate: Date };
