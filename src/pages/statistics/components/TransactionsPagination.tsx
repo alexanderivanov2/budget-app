@@ -12,7 +12,7 @@ const TransactionsPagination: React.FC = () => {
         <p>PAGE COUNT: {pageCount} </p>
         { currentPageTransactions.map((transaction, _) => {
             return (
-                <TransactionListItem key={transaction.id} transaction={transactions[transaction.id]} />
+                <TransactionListItem key={transaction.id} data={transactions[transaction.id]} />
             )
         })}
         <div>

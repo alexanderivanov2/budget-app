@@ -1,9 +1,10 @@
 import type { TransferData } from "../../../context/types/DataContextTypes";
 interface Props {
-    transaction: TransferData
+    data: TransferData;
+    style?: React.CSSProperties;
 }
-const TransactionListItem: React.FC<Props> = ({ transaction }) => {
-    return (<div className={`statistic-transaction-item ${transaction.type}`} key={transaction.id}>
+const TransactionListItem: React.FC<Props> = ({ data: transaction, style }) => {
+    return (<div className={`statistic-transaction-item ${transaction.type}`} key={transaction.id} style={style ? {...style} : {}}>
         <div style={{display: 'flex', gap: '15px'}}>
             <p>Transaction Type: {transaction.type}</p>
             <p>Transaction Amount: {transaction.amount}</p>
