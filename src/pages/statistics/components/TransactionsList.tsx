@@ -12,7 +12,7 @@ const TransactionList: React.FC = () => {
     return (
         <div className="statistics-transactions-list">
             <h3>TRANSACTIONS LIST</h3>
-            {extractedData.length ? <VirtualizedList itemHeight={80} windowHeight={500} component={TransactionListItem} transactions={transactions} data={extractedData} overscan={6}/> : 'No Data'}
+            {extractedData.length ? <VirtualizedList itemHeight={80} windowHeight={500} component={TransactionListItem} transactions={transactions} data={extractedData} overscan={8}/> : 'No Data'}
             <div>
                 <p>{dateCursor.current.year}-{dateCursor.current.month}-{dateCursor.current.day}</p>
             </div>

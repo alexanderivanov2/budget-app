@@ -1,4 +1,4 @@
-import { useState, type JSX } from "react";
+import { useRef, useState, type JSX, type UIEvent } from "react";
 import type { TransferData } from "../../context/types/DataContextTypes";
 
 interface Props {
@@ -19,6 +19,8 @@ const VirtualizedList: React.FC<Props> = ({
     component: ListComponent,
 }) => {
     const [scrollTop, setScrollTop] = useState(0);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const rafIdRef = useRef<number>(null);
     const startIndex = Math.max(0, Math.floor((scrollTop / itemHeight) - overscan))
     let renderedNodes = Math.floor(windowHeight / itemHeight) + 2 * overscan;
     renderedNodes = Math.min(data.length - startIndex, renderedNodes)
@@ -36,6 +38,12 @@ const VirtualizedList: React.FC<Props> = ({
         return items
     }
 
+    const onScroll = (e: UIEvent) => {
+        const scrollTop = e.currentTarget?.scrollTop;
+        if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = requestAnimationFrame(() => setScrollTop(scrollTop));
+    }
+
     return (
         <>
             <p>{scrollTop}</p>
@@ -45,17 +53,15 @@ const VirtualizedList: React.FC<Props> = ({
                 width: '100%',
                 border: '1px solid green',
                 height: `${windowHeight}px`,
-
-                // position: "relative",
             }}
-                onScroll={(e) => {
-                    setScrollTop(e.currentTarget.scrollTop);
-                }}
+                onScroll={onScroll}
+                ref={scrollContainerRef}
             >
-                <div style={{ height: `${renderedNodes * itemHeight}px` }}>
+                <div style={{ height: `${(data.length - overscan) * itemHeight}px` }}>
                     <div style={{
                         transform: `translateY(${startIndex * itemHeight}px)`,
-                        padding: '5px 3px'
+                        willChange: 'transform',
+                        padding: '5px 3px',
                     }}>
                         {generateListItem()}
                     </div>
