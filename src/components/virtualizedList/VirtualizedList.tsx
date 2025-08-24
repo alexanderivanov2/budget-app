@@ -39,15 +39,15 @@ const VirtualizedList: React.FC<Props> = ({
     }
 
     const onScroll = (e: UIEvent) => {
-        const scrollTop = e.currentTarget?.scrollTop;
+        const eventScrollTop = e.currentTarget?.scrollTop;
         if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
-        rafIdRef.current = requestAnimationFrame(() => setScrollTop(scrollTop));
+        rafIdRef.current = requestAnimationFrame(() => setScrollTop(eventScrollTop));
     }
 
     return (
         <>
             <p>{scrollTop}</p>
-            <p>{startIndex} </p>
+            <p>Start Index: {startIndex} </p>
             <div style={{
                 overflowY: 'scroll',
                 width: '100%',
