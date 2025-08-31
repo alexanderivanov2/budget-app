@@ -7,7 +7,7 @@ import TransactionListItem from "./TransactionListItem";
 const TransactionList: React.FC = () => {
     const { transactions } = useDataContext();
     const initialDate = getYearMonthDay(new Date());
-    const { extractedData, dateCursor, collectNewExtractData } = useExtractAllTransactions(initialDate);
+    const { extractedData, dateCursor, collectNewExtractData } = useExtractAllTransactions(initialDate, 20, true);
 
     return (
         <div className="statistics-transactions-list">
