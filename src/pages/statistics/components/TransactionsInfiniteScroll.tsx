@@ -3,6 +3,7 @@ import { useDataContext } from "../../../context/DataContext";
 import { getYearMonthDay } from "../../../utils/dateUtils";
 import useExtractAllTransactions from "../hooks/useExtractAllTransactions";
 import TransactionListItem from "./TransactionListItem";
+import VirtualizedList from "../../../components/virtualizedList/VirtualizedList";
 
 const ROOT_MARGIN = 200;
 
@@ -15,40 +16,34 @@ const TransactionsInifiniteScroll: React.FC = () => {
     const extractedLength = extractedData.length;
 
     useEffect(() => {
-        const root = infiniteScrollContainer.current;
         const target = sentielRef.current;
+        const root = infiniteScrollContainer.current;
 
         if (!root || !target) return;
 
         const io = new IntersectionObserver(([entry]) => {
-            console.log('Target Intersection');
             if (infiniteScrollContainer.current && entry.isIntersecting && hasMore) {
                 collectNewExtractData();
             }
         }, { root, rootMargin: `${ROOT_MARGIN}px` }
         );
 
-        console.log('Observer Connect')
         io.observe(target);
-        return () =>  { 
-            console.log('Observer Disconnect')
-            io.unobserve(target); 
+        return () => {
+            io.unobserve(target);
         }
     }, [])
 
     useEffect(() => {
-        const container = infiniteScrollContainer.current;
+        const container = sentielRef.current?.parentElement;
         if (!container) return;
 
         let cancelled = false;
 
-        if (container.scrollHeight > container.clientHeight  + 200 || !hasMore) return;
-
+        if (container.scrollHeight >= container.clientHeight || !hasMore) return;
         const fillPooling = () => {
             if (cancelled) return;
-
-            if (container.scrollHeight > container.clientHeight + 200 || !hasMore) return;
-            console.log('fill pooling')
+            if (container.scrollHeight >= container.clientHeight || !hasMore) return;
             collectNewExtractData();
 
             setTimeout(fillPooling, 0);
@@ -59,27 +54,16 @@ const TransactionsInifiniteScroll: React.FC = () => {
         return () => {
             cancelled = true;
         }
-    }, 
-    [hasMore, extractedData, infiniteScrollContainer.current?.scrollHeight, infiniteScrollContainer.current?.clientHeight]);
+    },
+        [hasMore, extractedData, infiniteScrollContainer.current?.scrollHeight, infiniteScrollContainer.current?.clientHeight]);
+
+
     return (<div className="transactions-infinite-scroll">
         <h2>Infinite Scroll</h2>
         <p>LOADED LENGTH: {extractedLength}</p>
-        <div className="infinite-scroll-container"
-            ref={infiniteScrollContainer}
-            style={{
-                height: 'calc(100vh - 200px)',
-                overflowY: 'scroll',
-                border: '1px solid purple',
-            }}
-        >
-            <div className="infinite-scroll-wrapper" ref={null}>
-                {extractedData.map((data) => {
-                    return <TransactionListItem data={transactions[data.id]} key={data.id} />
-                })}
-                {hasMore ? <div ref={sentielRef}></div> : <div>NO MORE DATA </div>}
-
-            </div>
-        </div>
+        <VirtualizedList data={extractedData} component={TransactionListItem} transactions={transactions} overscan={8} windowHeight={`500`} itemHeight={66} ref={infiniteScrollContainer}>
+            {hasMore ? <div ref={sentielRef}></div> : <div>NO MORE DATA </div>}
+        </VirtualizedList>
     </div>)
 }
 
