@@ -1,13 +1,15 @@
-import { useRef, useState, type JSX, type UIEvent } from "react";
+import { useEffect, useRef, useState, type JSX, type UIEvent } from "react";
 import type { TransferData } from "../../context/types/DataContextTypes";
 
 interface Props {
     itemHeight: number;
-    windowHeight: number;
+    windowHeight: string;
     overscan: number;
     data: any[];
     transactions: Record<string, TransferData>;
     component: React.ElementType;
+    children?: React.ReactNode;
+    ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 const VirtualizedList: React.FC<Props> = ({
@@ -17,12 +19,14 @@ const VirtualizedList: React.FC<Props> = ({
     data,
     transactions,
     component: ListComponent,
+    children,
+    ref,
 }) => {
     const [scrollTop, setScrollTop] = useState(0);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const rafIdRef = useRef<number>(null);
     const startIndex = Math.max(0, Math.floor((scrollTop / itemHeight) - overscan))
-    let renderedNodes = Math.floor(windowHeight / itemHeight) + 2 * overscan;
+    let renderedNodes = Math.floor(Number(windowHeight) / itemHeight) + 2 * overscan;
     renderedNodes = Math.min(data.length - startIndex, renderedNodes)
 
     const generateListItem = () => {
@@ -37,6 +41,12 @@ const VirtualizedList: React.FC<Props> = ({
 
         return items
     }
+
+    useEffect(() => {
+        if (ref) {
+            ref.current = scrollContainerRef.current;
+        };
+    }, [])
 
     const onScroll = (e: UIEvent) => {
         const eventScrollTop = e.currentTarget?.scrollTop;
@@ -64,6 +74,7 @@ const VirtualizedList: React.FC<Props> = ({
                         padding: '5px 3px',
                     }}>
                         {generateListItem()}
+                        {children && children}
                     </div>
                 </div>
             </div>
