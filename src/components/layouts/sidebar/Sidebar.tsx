@@ -1,6 +1,6 @@
 import { useState } from "react";
 import s from './Sidebar.module.scss';
-import ThemeToggle from "../ui/ThemeToggle";
+import ThemeToggle from "../../ui/ThemeToggle";
 import SidebarDesktopNavigation from "./SidebarDesktopNavigation";
 import { ChevronsLeft, ChevronsRight, DollarSign } from "react-feather";
 

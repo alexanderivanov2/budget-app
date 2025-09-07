@@ -1,6 +1,6 @@
 import { Layout, PieChart, TrendingUp } from "react-feather";
 import { Link, useLocation } from "react-router-dom";
-import ThemeToggle from "../ui/ThemeToggle";
+import ThemeToggle from "../../ui/ThemeToggle";
 import s from './MobileMenu.module.scss';
 
 const ICON_SIZE = 24;

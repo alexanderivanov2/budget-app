@@ -1,5 +1,5 @@
-import { MobileMenu } from '../../components/mobileMenu/MobileMenu'
-import Sidebar from '../../components/sidebar/Sidebar'
+import { MobileMenu } from '../../components/layouts/mobileMenu/MobileMenu'
+import Sidebar from '../../components/layouts/sidebar/Sidebar'
 import { Outlet } from 'react-router-dom'
 import useDeviceMediaQuery from '../../hooks/useDeviceMediaQuery'
 

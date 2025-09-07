@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import NotExist from "./NotExist";
 import { UserPage } from "../pages/user/UserPage";
-import { Dashboard } from "../components/dashboard/Dashboard";
+import { Dashboard } from "../components/layouts/dashboard/Dashboard";
 import TransactionsPage from "../pages/transactions/TransactionsPage";
 import IncomePage from "../pages/transactions//IncomePage";
 import ExpensePage from "../pages/transactions/ExpensePage";
