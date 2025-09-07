@@ -2,7 +2,7 @@ import VirtualizedList from "../../../components/virtualizedList/VirtualizedList
 import { useDataContext } from "../../../context/DataContext";
 import { getYearMonthDay } from "../../../utils/dateUtils";
 import useExtractAllTransactions from "../hooks/useExtractAllTransactions";
-import TransactionListItem from "./TransactionListItem";
+import TransactionListItem from "../../../features/transactionLists/components/TransactionListItem";
 
 const TransactionList: React.FC = () => {
     const { transactions } = useDataContext();

@@ -1,6 +1,6 @@
 import type React from 'react';
 import FormField from '../../components/ui/input/FormField';
-import useTransactionForm from '../../hooks/useTransactionForm';
+import useTransactionForm from './hooks/useTransactionForm';
 import { useLocation } from 'react-router-dom';
 
 const SELECT_CATEGORY_DATA = {

@@ -61,7 +61,7 @@ const TransactionsInifiniteScroll: React.FC = () => {
     return (<div className="transactions-infinite-scroll">
         <h2>Infinite Scroll</h2>
         <p>LOADED LENGTH: {extractedLength}</p>
-        <VirtualizedList data={extractedData} component={TransactionListItem} transactions={transactions} overscan={8} windowHeight={`500`} itemHeight={66} ref={infiniteScrollContainer}>
+        <VirtualizedList data={extractedData} component={TransactionListItem} transactions={transactions} overscan={8} windowHeight={500} itemHeight={66} ref={infiniteScrollContainer}>
             {hasMore ? <div ref={sentielRef}></div> : <div>NO MORE DATA </div>}
         </VirtualizedList>
     </div>)

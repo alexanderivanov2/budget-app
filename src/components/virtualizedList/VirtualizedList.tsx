@@ -3,7 +3,7 @@ import type { TransferData } from "../../context/types/DataContextTypes";
 
 interface Props {
     itemHeight: number;
-    windowHeight: string;
+    windowHeight: number;
     overscan: number;
     data: any[];
     transactions: Record<string, TransferData>;

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
-import { isNumber } from "../utils/validations";
-import { dateToStringValue, convertStringDateToDate } from "../utils/convert";
-import { useDataContext } from "../context/DataContext";
-import type { TransferData } from "../context/types/DataContextTypes";
+import { isNumber } from "../../../utils/validations";
+import { dateToStringValue, convertStringDateToDate } from "../../../utils/convert";
+import { useDataContext } from "../../../context/DataContext";
+import type { TransferData } from "../../../context/types/DataContextTypes";
 
 const FORM_KEYS = ['budget', 'amount', 'description', 'date', 'category'] as const;
 type FormKey = typeof FORM_KEYS[number];

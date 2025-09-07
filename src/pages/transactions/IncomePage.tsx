@@ -1,4 +1,4 @@
-import TransactionForm from '../TransactionForm'
+import TransactionForm from '../../features/transactionForm/TransactionForm'
 
 const IncomePage = () => {
   return (

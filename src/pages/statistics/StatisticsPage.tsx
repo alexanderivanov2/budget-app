@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import TransactionList from './components/TransactionsList';
-import TransactionsPagination from './components/TransactionsPagination';
-import TransactionsInifiniteScroll from './components/TransactionsInfiniteScroll';
+import TransactionList from '../../features/transactionLists/components/TransactionsList';
+import TransactionsPagination from '../../features/transactionLists/components/TransactionsPagination';
+import TransactionsInifiniteScroll from '../../features/transactionLists/components/TransactionsInfiniteScroll';
 
 export const StatisticsPage = () => {
   const [transactionsVariant, setTransactionsVariant] = useState('list');
