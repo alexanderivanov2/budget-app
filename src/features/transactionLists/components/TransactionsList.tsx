@@ -4,13 +4,18 @@ import { getYearMonthDay } from '../../../utils/dateUtils';
 import useExtractAllTransactions from '../hooks/useExtractAllTransactions';
 import TransactionListItem from '../../../features/transactionLists/components/TransactionListItem';
 
-const TransactionList: React.FC = () => {
-    const { transactions } = useDataContext();
+type Props = {
+    transactionType: 'all' | 'income' | 'expense';
+};
+
+const TransactionList: React.FC<Props> = ({ transactionType }) => {
+    const { transactions, transactionsCount, expenseCount, incomeCount } = useDataContext();
     const initialDate = getYearMonthDay(new Date());
-    const { extractedData, dateCursor, collectNewExtractData } = useExtractAllTransactions(
+    const { extractedData, dateCursor, collectNewExtractData, hasMore } = useExtractAllTransactions(
         initialDate,
         20,
         true,
+        transactionType,
     );
 
     return (

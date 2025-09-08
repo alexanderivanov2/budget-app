@@ -5,26 +5,40 @@ import TransactionsInifiniteScroll from '../../features/transactionLists/compone
 
 export const StatisticsPage = () => {
     const [transactionsVariant, setTransactionsVariant] = useState('list');
+    const [transactionsType, setTransactionsType] = useState<'all' | 'income' | 'expense'>('all');
 
     const changeTransactionsVariant = (variant: string) => {
         setTransactionsVariant(variant);
     };
 
+    const changeTransactionsType = (type: 'all' | 'income' | 'expense') => {
+        setTransactionsType(type);
+    };
+
     return (
         <div className="statistics">
             <h2>StatisticsPage</h2>
-            <div style={{ display: 'flex' }}>
-                {' '}
-                <button onClick={() => changeTransactionsVariant('list')}>List</button>{' '}
-                <button onClick={() => changeTransactionsVariant('pagination')}>Pagination</button>{' '}
+            <div style={{ display: 'flex', gap: '5px' }}>
+                <span>Variant: </span>
+                <button onClick={() => changeTransactionsVariant('list')}>List</button>
+                <button onClick={() => changeTransactionsVariant('pagination')}>Pagination</button>
                 <button onClick={() => changeTransactionsVariant('infinite')}>Infinite</button>
             </div>
+            <div style={{ display: 'flex', gap: '5px' }}>
+                <span>Type: </span>
+                <button onClick={() => changeTransactionsType('all')}>All</button>
+                <button onClick={() => changeTransactionsType('income')}>Income</button>
+                <button onClick={() => changeTransactionsType('expense')}>Expense</button>
+            </div>
             {transactionsVariant === 'list' ? (
-                <TransactionList />
+                <TransactionList transactionType={transactionsType} key={transactionsType} />
             ) : transactionsVariant === 'pagination' ? (
-                <TransactionsPagination />
+                <TransactionsPagination transactionType={transactionsType} key={transactionsType} />
             ) : (
-                <TransactionsInifiniteScroll />
+                <TransactionsInifiniteScroll
+                    transactionType={transactionsType}
+                    key={transactionsType}
+                />
             )}
         </div>
     );

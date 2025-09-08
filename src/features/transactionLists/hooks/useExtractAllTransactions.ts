@@ -17,7 +17,7 @@ const useExtractAllTransactions = (
     initialDate: InitialDate,
     extractLimitStep = EXTRACT_LIMIT_STEP,
     initialExtraction: boolean = false,
-    extractType: ExtractType = 'income',
+    extractType: ExtractType = 'all',
 ) => {
     const [extractedData, setExtractedData] = useState<typeData[]>([]);
     const { incomeData, expenseData, transactionsCount, incomeCount, expenseCount } =
@@ -169,10 +169,19 @@ const useExtractAllTransactions = (
 
     const inFlightRef = useRef(false);
 
+    const getDataArr = () => {
+        if (extractType === 'all') {
+            return [expenseData, incomeData];
+        } else {
+            return extractType === 'income' ? [incomeData] : [expenseData];
+        }
+    };
+
     function collectNewExtractData() {
         if (inFlightRef.current) return;
         inFlightRef.current = true;
-        const dataArr = [expenseData, incomeData];
+        // const dataArr = [expenseData, incomeData];
+        const dataArr = getDataArr();
 
         const { extractData, cursorUpdate } = extractDataRecordsPerLimit(dataArr, dateCursor);
         setExtractedData((prevExtractedData) => {
