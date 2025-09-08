@@ -11,18 +11,28 @@ type InitialDate = {
     day: number;
 };
 
+type ExtractType = 'all' | 'income' | 'expense';
+
 const useExtractAllTransactions = (
     initialDate: InitialDate,
     extractLimitStep = EXTRACT_LIMIT_STEP,
     initialExtraction: boolean = false,
+    extractType: ExtractType = 'income',
 ) => {
     const [extractedData, setExtractedData] = useState<typeData[]>([]);
-    const { incomeData, expenseData, transactionsCount } = useDataContext();
+    const { incomeData, expenseData, transactionsCount, incomeCount, expenseCount } =
+        useDataContext();
     const hasInitialExtraction = useRef(initialExtraction);
     const dateCursor = useRef({ ...initialDate });
 
     const extractedCount = extractedData.length;
-    const hasMore = transactionsCount > extractedCount;
+    const extractedTypeCount =
+        extractType === 'all'
+            ? transactionsCount
+            : extractType === 'income'
+              ? incomeCount
+              : expenseCount;
+    const hasMore = extractedTypeCount > extractedCount;
 
     useEffect(() => {
         if (hasInitialExtraction.current) {
@@ -48,6 +58,19 @@ const useExtractAllTransactions = (
         }
     };
 
+    const getDayTransactions = (y: number, m: number, d: number) => {
+        let dayTransactionsList: typeData[] = [];
+        if (extractType !== 'expense') {
+            dayTransactionsList = [...(incomeData[y]?.[m]?.[d] || [])];
+        }
+
+        if (extractType !== 'income') {
+            dayTransactionsList = [...dayTransactionsList, ...(expenseData[y]?.[m]?.[d] || [])];
+        }
+
+        return dayTransactionsList;
+    };
+
     const extractDataPerLimit = (
         dataArr: Data[],
         dateCursorData: RefObject<{ year: number; month: number; day: number }>,
@@ -70,10 +93,9 @@ const useExtractAllTransactions = (
             for (let d = startDay; d > 0; d--) {
                 day = d;
                 if (checkDateRecordExist(dataArr, year, m, d)) {
-                    const dayTransactions = [
-                        ...(incomeData[year]?.[m]?.[d] || []),
-                        ...(expenseData[year]?.[m]?.[d] || []),
-                    ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                    const dayTransactions = getDayTransactions(year, m, d).sort(
+                        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+                    );
 
                     extractDataArr = [...extractDataArr, ...dayTransactions];
                     if (extractDataArr.length >= extractLimitStep) {

@@ -27,6 +27,8 @@ export interface DataContextType {
     incomeData: Data;
     expenseData: Data;
     transactionsCount: number;
+    incomeCount: number;
+    expenseCount: number;
     initialDate: Date;
     dataDispatch: React.Dispatch<Action>;
 }

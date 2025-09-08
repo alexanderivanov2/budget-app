@@ -7,6 +7,8 @@ const DataContext = createContext<DataContextType>({
     incomeData: {},
     expenseData: {},
     transactionsCount: 0,
+    incomeCount: 0,
+    expenseCount: 0,
     initialDate: new Date(),
     dataDispatch: () => {},
 });
@@ -113,6 +115,8 @@ const DataProvider: React.FC<Props> = ({ children }) => {
     const [data, dispatch] = useReducer(dataReducer, initialDataReducer);
     const dataRef = useRef(data);
     const transactionsCount = Object.keys(data.transactions).length;
+    const incomeCount = Object.keys(data.incomeData).length;
+    const expenseCount = Object.keys(data.expenseData).length;
 
     useEffect(() => {
         dataRef.current = data;
@@ -148,6 +152,8 @@ const DataProvider: React.FC<Props> = ({ children }) => {
                 incomeData: data.incomeData,
                 expenseData: data.expenseData,
                 transactionsCount,
+                incomeCount,
+                expenseCount,
                 initialDate: data.initialDate,
                 dataDispatch: dispatch,
             }}
