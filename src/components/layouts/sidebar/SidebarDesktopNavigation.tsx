@@ -1,35 +1,35 @@
 import s from './Sidebar.module.scss';
-import { PieChart, PlusSquare, MinusSquare, Layout, TrendingUp } from "react-feather";
-import { Link, useLocation } from "react-router-dom"
+import { PieChart, PlusSquare, MinusSquare, Layout, TrendingUp } from 'react-feather';
+import { Link, useLocation } from 'react-router-dom';
 
 const ICON_SIZE = 26;
 const SIDEBAR_LINKS = [
     {
-        to: "/",
+        to: '/',
         title: 'Dashboard',
-        Icon: <Layout size={ICON_SIZE} />
+        Icon: <Layout size={ICON_SIZE} />,
     },
     {
-        to: "/transactions",
+        to: '/transactions',
         title: 'Transactions',
-        Icon: <TrendingUp size={ICON_SIZE} />
+        Icon: <TrendingUp size={ICON_SIZE} />,
     },
     {
-        to: "/transactions/income",
+        to: '/transactions/income',
         title: 'Income',
-        Icon: <PlusSquare size={ICON_SIZE} />
+        Icon: <PlusSquare size={ICON_SIZE} />,
     },
     {
-        to: "/transactions/expenses",
+        to: '/transactions/expenses',
         title: 'Expenses',
-        Icon: <MinusSquare size={ICON_SIZE} />
+        Icon: <MinusSquare size={ICON_SIZE} />,
     },
     {
-        to: "/statistics",
+        to: '/statistics',
         title: 'Statistics',
-        Icon: <PieChart size={ICON_SIZE} />
-    }
-]
+        Icon: <PieChart size={ICON_SIZE} />,
+    },
+];
 
 interface Props {
     open: boolean;
@@ -39,24 +39,23 @@ const SidebarDesktopNavigation: React.FC<Props> = ({ open }) => {
     const { pathname } = useLocation();
     return (
         <nav className={s['sidebar-navigation']}>
-            <ul className={`${s['sidebar-nav-list']} ${open ? "" : s['close']}`}>
+            <ul className={`${s['sidebar-nav-list']} ${open ? '' : s['close']}`}>
                 {SIDEBAR_LINKS.map(({ to, title, Icon }) => {
                     return (
-                        <li key={title} className={`${s['sidebar-nav-item']} sidebar-nav-item-${title} ${to === pathname ? s['active'] : ''} `}>
+                        <li
+                            key={title}
+                            className={`${s['sidebar-nav-item']} sidebar-nav-item-${title} ${to === pathname ? s['active'] : ''} `}
+                        >
                             <Link to={to}>
-                                <div className={s['sidebar-nav-item-icon-wrapper']}>
-                                    {Icon}
-                                </div>
-                                <p className={open ? s['open'] : s['close']}>
-                                    {title}
-                                </p>
+                                <div className={s['sidebar-nav-item-icon-wrapper']}>{Icon}</div>
+                                <p className={open ? s['open'] : s['close']}>{title}</p>
                             </Link>
                         </li>
-                    )
+                    );
                 })}
             </ul>
         </nav>
-    )
-}
+    );
+};
 
-export default SidebarDesktopNavigation
+export default SidebarDesktopNavigation;

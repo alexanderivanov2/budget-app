@@ -1,11 +1,11 @@
-import TransactionForm from '../../features/transactionForm/TransactionForm'
+import TransactionForm from '../../features/transactionForm/TransactionForm';
 
 const IncomePage = () => {
-  return (
-    <div className='transaction transaction-income'>
-      <TransactionForm title='Income' />
-    </div>
-  )
-}
+    return (
+        <div className="transaction transaction-income">
+            <TransactionForm title="Income" />
+        </div>
+    );
+};
 
-export default IncomePage
+export default IncomePage;

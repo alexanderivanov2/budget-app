@@ -5,5 +5,5 @@ module.exports = {
     semi: true,
     singleQuote: true,
     trailingComma: 'all',
-    endOfLine: 'lf',
+    endOfLine: 'crlf', // windows solo
 };

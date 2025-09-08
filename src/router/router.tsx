@@ -1,20 +1,20 @@
-import { createBrowserRouter } from "react-router-dom";
-import NotExist from "./NotExist";
-import { UserPage } from "../pages/user/UserPage";
-import { Dashboard } from "../components/layouts/dashboard/Dashboard";
-import TransactionsPage from "../pages/transactions/TransactionsPage";
-import IncomePage from "../pages/transactions//IncomePage";
-import ExpensePage from "../pages/transactions/ExpensePage";
-import { StatisticsPage } from "../pages/statistics/StatisticsPage";
+import { createBrowserRouter } from 'react-router-dom';
+import NotExist from './NotExist';
+import { UserPage } from '../pages/user/UserPage';
+import { Dashboard } from '../components/layouts/dashboard/Dashboard';
+import TransactionsPage from '../pages/transactions/TransactionsPage';
+import IncomePage from '../pages/transactions//IncomePage';
+import ExpensePage from '../pages/transactions/ExpensePage';
+import { StatisticsPage } from '../pages/statistics/StatisticsPage';
 
 const router = createBrowserRouter([
     {
-        path: "/",
+        path: '/',
         element: <UserPage />,
         children: [
             {
                 index: true,
-                element: <Dashboard />
+                element: <Dashboard />,
             },
             {
                 path: '/transactions',
@@ -23,24 +23,23 @@ const router = createBrowserRouter([
                     {
                         path: 'income',
                         element: <IncomePage />,
-                    }, 
+                    },
                     {
                         path: 'expenses',
                         element: <ExpensePage />,
-                    }
-                ]
+                    },
+                ],
             },
             {
                 path: '/statistics',
                 element: <StatisticsPage />,
             },
-        ]
+        ],
     },
     {
-        path: "*",
-        element: <NotExist />
-    } 
-
-])
+        path: '*',
+        element: <NotExist />,
+    },
+]);
 
 export default router;

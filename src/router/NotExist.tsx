@@ -1,7 +1,5 @@
 export const NotExist = () => {
-  return (
-    <div>NotExist</div>
-  )
-}
+    return <div>NotExist</div>;
+};
 
 export default NotExist;
