@@ -1,11 +1,11 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom';
 
 const TransactionsPage = () => {
-  return (
-    <div className='transactions'>
-        <Outlet />
-    </div>
-  )
-}
+    return (
+        <div className="transactions">
+            <Outlet />
+        </div>
+    );
+};
 
 export default TransactionsPage;

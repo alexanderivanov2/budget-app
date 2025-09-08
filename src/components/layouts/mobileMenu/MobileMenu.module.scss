@@ -4,7 +4,7 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding: .5rem 0;
+    padding: 0.5rem 0;
     bottom: 0;
     background-color: var(--color-surface);
 
@@ -21,12 +21,12 @@
             align-items: center;
             text-decoration: none;
             color: var(--color-text-primary);
-            padding: .25rem;
+            padding: 0.25rem;
 
             &.active {
                 background-color: var(--color-primary);
                 color: var(--color-on-primary);
-                border-radius: 10px;                
+                border-radius: 10px;
             }
         }
     }

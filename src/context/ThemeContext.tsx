@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from 'react';
 
 interface Props {
     children: React.ReactNode;
@@ -14,11 +14,14 @@ const setBodyThemeClass = (theme: Theme) => {
     } else {
         document.body.classList.remove('dark');
     }
-}
+};
 
 setBodyThemeClass(initialTheme);
 
-const ThemeContext = createContext({ theme: initialTheme, handleThemeChange: () => { } });
+const ThemeContext = createContext({
+    theme: initialTheme,
+    handleThemeChange: () => {},
+});
 
 export const useThemeContext = () => {
     const context = useContext(ThemeContext);
@@ -31,10 +34,10 @@ export const useThemeContext = () => {
 const ThemeProvider: React.FC<Props> = ({ children }) => {
     const [theme, setTheme] = useState(initialTheme);
     const handleThemeChange = () => {
-        const newTheme = theme === 'light' ? 'dark' : 'light'
+        const newTheme = theme === 'light' ? 'dark' : 'light';
         localStorage.setItem('theme', JSON.stringify(newTheme));
         setTheme(newTheme);
-    }
+    };
 
     useEffect(() => {
         setBodyThemeClass(theme);
@@ -44,7 +47,7 @@ const ThemeProvider: React.FC<Props> = ({ children }) => {
         <ThemeContext.Provider value={{ theme: theme, handleThemeChange: handleThemeChange }}>
             {children}
         </ThemeContext.Provider>
-    )
-}
+    );
+};
 
 export default ThemeProvider;
