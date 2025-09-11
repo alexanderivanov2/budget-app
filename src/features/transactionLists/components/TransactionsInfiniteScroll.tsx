@@ -6,15 +6,22 @@ import TransactionListItem from './TransactionListItem';
 import VirtualizedList from '../../../components/virtualizedList/VirtualizedList';
 
 const ROOT_MARGIN = 200;
+const EXTRACT_PER_PAGE = 10;
 
-const TransactionsInifiniteScroll: React.FC = () => {
+type Props = {
+    transactionType: 'all' | 'income' | 'expense';
+};
+
+const TransactionsInifiniteScroll: React.FC<Props> = ({ transactionType }) => {
     const infiniteScrollContainer = useRef<HTMLDivElement>(null);
     const sentielRef = useRef<HTMLDivElement>(null);
     const { transactions, initialDate } = useDataContext();
     const yearMonthDayDate = getYearMonthDay(initialDate);
     const { extractedData, collectNewExtractData, hasMore } = useExtractAllTransactions(
         yearMonthDayDate,
-        10,
+        EXTRACT_PER_PAGE,
+        false,
+        transactionType,
     );
     const extractedLength = extractedData.length;
 
