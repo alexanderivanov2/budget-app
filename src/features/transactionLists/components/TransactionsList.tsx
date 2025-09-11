@@ -9,19 +9,21 @@ type Props = {
 };
 
 const TransactionList: React.FC<Props> = ({ transactionType }) => {
-    const { transactions, transactionsCount, expenseCount, incomeCount } = useDataContext();
+    const { transactions } = useDataContext();
     const initialDate = getYearMonthDay(new Date());
-    const { extractedData, dateCursor, collectNewExtractData, hasMore } = useExtractAllTransactions(
-        initialDate,
-        20,
-        true,
-        transactionType,
-    );
+    const {
+        extractedData,
+        dateCursor,
+        collectNewExtractData,
+        hasMore,
+        extractedTypeCount,
+        extractedCount,
+    } = useExtractAllTransactions(initialDate, 20, true, transactionType);
 
     return (
         <div className="statistics-transactions-list">
             <h3>TRANSACTIONS LIST</h3>
-            {extractedData.length ? (
+            {extractedCount ? (
                 <VirtualizedList
                     itemHeight={80}
                     windowHeight={500}
@@ -39,13 +41,9 @@ const TransactionList: React.FC<Props> = ({ transactionType }) => {
                 </p>
             </div>
             <p>
-                {Object.keys(transactions).length} === {extractedData.length}
+                {extractedTypeCount} === {extractedCount}
             </p>
-            {Object.keys(transactions).length === extractedData.length ? (
-                <p>'NO MORE'</p>
-            ) : (
-                <button onClick={collectNewExtractData}>NEW LIST</button>
-            )}
+            {hasMore ? <button onClick={collectNewExtractData}>NEW LIST</button> : <p>'NO MORE'</p>}
         </div>
     );
 };
