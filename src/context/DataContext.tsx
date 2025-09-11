@@ -115,8 +115,10 @@ const DataProvider: React.FC<Props> = ({ children }) => {
     const [data, dispatch] = useReducer(dataReducer, initialDataReducer);
     const dataRef = useRef(data);
     const transactionsCount = Object.keys(data.transactions).length;
-    const incomeCount = Object.keys(data.incomeData).length;
-    const expenseCount = Object.keys(data.expenseData).length;
+    const incomeCount = Object.values(data.transactions).filter(
+        (transaction) => transaction.type === 'income',
+    ).length;
+    const expenseCount = transactionsCount - incomeCount;
 
     useEffect(() => {
         dataRef.current = data;
