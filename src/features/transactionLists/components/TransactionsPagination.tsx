@@ -1,20 +1,24 @@
 import useTransactionsPagination from '../hooks/useTransactionsPagination';
 import TransactionListItem from './TransactionListItem';
 
-const TransactionsPagination: React.FC = () => {
+type Props = {
+    transactionType: 'all' | 'income' | 'expense';
+};
+
+const TransactionsPagination: React.FC<Props> = ({ transactionType }) => {
     const {
-        transactionsCount,
+        count,
         pageCount,
         currentPage,
         currentPageTransactions,
         transactions,
         extractedData,
         setCurrentPage,
-    } = useTransactionsPagination();
+    } = useTransactionsPagination(transactionType);
     return (
         <div>
             <h2>PAGINATION LIST</h2>
-            <p>Transactions Count: {transactionsCount}</p>
+            <p>Transactions Count: {count}</p>
             <p>Current Page {currentPage}</p>
             <p>PAGE COUNT: {pageCount} </p>
             <p>Extracted Data Transactions: {extractedData.length}</p>
