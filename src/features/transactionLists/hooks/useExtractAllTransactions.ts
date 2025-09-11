@@ -202,6 +202,7 @@ const useExtractAllTransactions = (
         dateCursor,
         hasMore,
         extractedCount,
+        extractedTypeCount,
         hasInitialExtraction,
     };
 };
