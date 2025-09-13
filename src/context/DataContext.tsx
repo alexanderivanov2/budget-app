@@ -98,7 +98,6 @@ const dataReducer = (state: State, action: Action) => {
             return { ...state };
         }
     }
-    return state;
 };
 
 const transactionsJSONData = localStorage.getItem('transactionsData');
