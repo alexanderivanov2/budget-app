@@ -1,14 +1,9 @@
 import { createContext, useContext, useReducer, type Dispatch } from 'react';
-
-type TimeFrameType = 'allTime' | 'year' | 'month' | 'week' | 'day' | 'custom';
-type TimeFrameDate = Date | null;
-
-interface TimeFrameContext {
-    startDate: TimeFrameDate;
-    endDate: TimeFrameDate;
-    timeFrameType: TimeFrameType;
-    timeFrameDispatch: React.Dispatch<TimeFrameReducerAction>;
-}
+import type {
+    TimeFrameContext,
+    TimeFrameReducerAction,
+    TimeFrameReducerState,
+} from '../types/timeframe.types';
 
 const initialContext: TimeFrameContext = {
     startDate: null,
@@ -28,11 +23,6 @@ export const useTimeFrameContext = () => {
 
     return context;
 };
-type TimeFrameReducerAction =
-    | { type: 'setTimeFrameType'; payload: TimeFrameType }
-    | { type: 'setStartDate' | 'setEndDate'; payload: TimeFrameDate };
-
-type TimeFrameReducerState = Omit<TimeFrameContext, 'timeFrameDispatch'>;
 
 const timeFrameReducer = (state: TimeFrameReducerState, action: TimeFrameReducerAction) => {
     switch (action.type) {
