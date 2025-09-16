@@ -5,7 +5,7 @@ const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', '
 
 const TimeFrameNavigator: React.FC = () => {
     const [navigatorDate, setNavigatorDate] = useState(() => new Date());
-    const { timeFrameType } = useTimeFrameContext();
+    const { timeFrameType, timeFrameDate, timeFrameDispatch } = useTimeFrameContext();
     if (timeFrameType === 'allTime') return null;
 
     const getNavigatorInputData = () => {
@@ -44,61 +44,49 @@ const TimeFrameNavigator: React.FC = () => {
     };
 
     const prevYear = () => {
-        setNavigatorDate((prevDate) => {
-            const dateUpdate = new Date(prevDate);
-            dateUpdate.setFullYear(dateUpdate.getFullYear() - 1);
-            return dateUpdate;
-        });
+        const dateUpdate = new Date(timeFrameDate);
+        dateUpdate.setFullYear(dateUpdate.getFullYear() - 1);
+        timeFrameDispatch({ type: 'setTimeFrameDate', payload: dateUpdate });
     };
 
     const prevMonth = () => {
-        setNavigatorDate((prevDate) => {
-            const dateUpdate = new Date(prevDate);
-            const monthValue = dateUpdate.getMonth();
-            const newMonth = monthValue ? monthValue - 1 : 11;
-            dateUpdate.setMonth(newMonth);
-            return dateUpdate;
-        });
+        const dateUpdate = new Date(timeFrameDate);
+        const monthValue = dateUpdate.getMonth();
+        const newMonth = monthValue ? monthValue - 1 : 11;
+        dateUpdate.setMonth(newMonth);
+        timeFrameDispatch({ type: 'setTimeFrameDate', payload: dateUpdate });
     };
 
     const prevDay = () => {
-        setNavigatorDate((prevDate) => {
-            const dateUpdate = new Date(prevDate);
-            const dayValue = dateUpdate.getDate() - 1;
+        const dateUpdate = new Date(timeFrameDate);
+        const dayValue = dateUpdate.getDate() - 1;
 
-            // use Date overflow - 1;
-            dateUpdate.setDate(dayValue);
-            return dateUpdate;
-        });
+        // use Date overflow - 1;
+        dateUpdate.setDate(dayValue);
+        timeFrameDispatch({ type: 'setTimeFrameDate', payload: dateUpdate });
     };
 
     const nextDay = () => {
-        setNavigatorDate((prevDate) => {
-            const dateUpdate = new Date(prevDate);
-            const dayValue = dateUpdate.getDate() + 1;
+        const dateUpdate = new Date(timeFrameDate);
+        const dayValue = dateUpdate.getDate() + 1;
 
-            // use Date overflow + 1
-            dateUpdate.setDate(dayValue);
-            return dateUpdate;
-        });
+        // use Date overflow + 1
+        dateUpdate.setDate(dayValue);
+        timeFrameDispatch({ type: 'setTimeFrameDate', payload: dateUpdate });
     };
 
     const nextMonth = () => {
-        setNavigatorDate((prevDate) => {
-            const dateUpdate = new Date(prevDate);
-            const monthValue = dateUpdate.getMonth();
-            const newMonth = monthValue === 11 ? 0 : monthValue + 1;
-            dateUpdate.setMonth(newMonth);
-            return dateUpdate;
-        });
+        const dateUpdate = new Date(timeFrameDate);
+        const monthValue = dateUpdate.getMonth();
+        const newMonth = monthValue === 11 ? 0 : monthValue + 1;
+        dateUpdate.setMonth(newMonth);
+        timeFrameDispatch({ type: 'setTimeFrameDate', payload: dateUpdate });
     };
 
     const nextYear = () => {
-        setNavigatorDate((prevDate) => {
-            const dateUpdate = new Date(prevDate);
-            dateUpdate.setFullYear(dateUpdate.getFullYear() + 1);
-            return dateUpdate;
-        });
+        const dateUpdate = new Date(timeFrameDate);
+        dateUpdate.setFullYear(dateUpdate.getFullYear() + 1);
+        timeFrameDispatch({ type: 'setTimeFrameDate', payload: dateUpdate });
     };
 
     const handlePrevChangeTimeFrameNavigator = () => {
@@ -120,7 +108,6 @@ const TimeFrameNavigator: React.FC = () => {
             nextDay();
         }
     };
-    const { inputType, inputValue } = getNavigatorInputData();
 
     return (
         <div className="time-frame-navigator">
@@ -134,7 +121,7 @@ const TimeFrameNavigator: React.FC = () => {
             </div>
             <div className="time-frame-navigator-current-input">
                 <div>
-                    ({timeFrameType}: {inputValue}){' '}
+                    ({timeFrameType}: {timeFrameDate.toLocaleDateString()}){' '}
                 </div>
             </div>
             <div className="time-frame-navigator-next" onClick={handleNextChangeTimeFrameNavigator}>

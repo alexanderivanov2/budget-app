@@ -3,15 +3,12 @@ import TransactionList from '../../features/transactionLists/components/Transact
 import TransactionsPagination from '../../features/transactionLists/components/TransactionsPagination';
 import TransactionsInifiniteScroll from '../../features/transactionLists/components/TransactionsInfiniteScroll';
 import TimeFrameDropdown from '../../features/timeframe/components/TimeFrameDropdown';
-import TimeFrameProvider, {
-    useTimeFrameContext,
-} from '../../features/timeframe/components/TimeFrameContext';
+import TimeFrameNavigator from '../../features/timeframe/components/TimeFrameNavigator';
 
 export const StatisticsPage = () => {
     const [transactionsVariant, setTransactionsVariant] = useState('list');
     const [transactionsType, setTransactionsType] = useState<'all' | 'income' | 'expense'>('all');
 
-    const { timeFrameType, timeFrameDispatch } = useTimeFrameContext();
     const changeTransactionsVariant = (variant: string) => {
         setTransactionsVariant(variant);
     };
@@ -35,12 +32,8 @@ export const StatisticsPage = () => {
                 <button onClick={() => changeTransactionsType('income')}>Income</button>
                 <button onClick={() => changeTransactionsType('expense')}>Expense</button>
             </div>
-            <TimeFrameDropdown />:{timeFrameType}
-            <button
-                onClick={() => timeFrameDispatch({ type: 'setTimeFrameType', payload: 'month' })}
-            >
-                change to month
-            </button>
+            <TimeFrameDropdown />
+            <TimeFrameNavigator />
             {transactionsVariant === 'list' ? (
                 <TransactionList transactionType={transactionsType} key={transactionsType} />
             ) : transactionsVariant === 'pagination' ? (

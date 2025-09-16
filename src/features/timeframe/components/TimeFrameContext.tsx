@@ -9,6 +9,7 @@ const initialContext: TimeFrameContext = {
     startDate: null,
     endDate: null,
     timeFrameType: 'allTime',
+    timeFrameDate: new Date(),
     timeFrameDispatch: () => {},
 };
 
@@ -35,6 +36,13 @@ const timeFrameReducer = (state: TimeFrameReducerState, action: TimeFrameReducer
         case 'setEndDate': {
             return { ...state, endDate: action.payload };
         }
+        case 'setTimeFrameDate': {
+            if (!action.payload) return state;
+            return {
+                ...state,
+                timeFrameDate: action.payload,
+            };
+        }
     }
 };
 
@@ -47,12 +55,14 @@ const TimeFrameProvider: React.FC<Props> = ({ children }) => {
         startDate: null,
         endDate: null,
         timeFrameType: 'allTime',
+        timeFrameDate: new Date(),
     });
 
     return (
         <TimeframeContext.Provider
             value={{
                 timeFrameType: data.timeFrameType,
+                timeFrameDate: data.timeFrameDate,
                 startDate: data.startDate,
                 endDate: data.endDate,
                 timeFrameDispatch: dispatch,

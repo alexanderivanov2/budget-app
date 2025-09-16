@@ -10,3 +10,11 @@ export const getDaysInMonth = (year: number, month: number) => new Date(year, mo
 
 export const getDaysInMonthArrayReverse = (daysCount: number) =>
     Array.from({ length: daysCount }, (_, i: number) => daysCount - i);
+
+export const getPrevMonthLastDay = (date: Date) => {
+    const currentMonth = date.getMonth();
+    const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const year = prevMonth !== 11 ? date.getFullYear() : date.getFullYear() - 1;
+
+    return getDaysInMonth(year, prevMonth);
+};
