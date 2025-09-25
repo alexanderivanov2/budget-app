@@ -1,5 +1,11 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
-import type { Action, DataContextType, State } from './types/DataContextTypes';
+import type {
+    Action,
+    DataContextType,
+    MetaMinDateData,
+    State,
+    TransactionsTypes,
+} from './types/DataContextTypes';
 import { getYearMonthDay } from '../utils/dateUtils';
 
 const DataContext = createContext<DataContextType>({
@@ -10,6 +16,11 @@ const DataContext = createContext<DataContextType>({
     incomeCount: 0,
     expenseCount: 0,
     initialDate: new Date(),
+    metaMinDateData: {
+        income: null,
+        expense: null,
+        all: null,
+    },
     dataDispatch: () => {},
 });
 
@@ -100,14 +111,28 @@ const dataReducer = (state: State, action: Action) => {
     }
 };
 
+const normalizeMetaMinDateDataToDate = (metaDateData: MetaMinDateData) => {
+    const data = {} as MetaMinDateData;
+    const keys: TransactionsTypes[] = ['all', 'income', 'expense'];
+    keys.forEach((key) => {
+        data[key] = metaDateData[key] ? new Date(metaDateData[key]) : null;
+    });
+
+    return data;
+};
+
 const transactionsJSONData = localStorage.getItem('transactionsData');
 const incomeJSONData = localStorage.getItem('incomeData');
 const expenseJSONData = localStorage.getItem('expenseData');
+const metaMinDateDataJSONData = localStorage.getItem('metaMinDateData');
 const initialDataReducer: State = {
     transactions: transactionsJSONData ? JSON.parse(transactionsJSONData) : {},
     incomeData: incomeJSONData ? JSON.parse(incomeJSONData) : {},
     expenseData: expenseJSONData ? JSON.parse(expenseJSONData) : {},
     initialDate: new Date(),
+    metaMinDateData: metaMinDateDataJSONData
+        ? normalizeMetaMinDateDataToDate(JSON.parse(metaMinDateDataJSONData) as MetaMinDateData)
+        : { income: null, expense: null, all: null },
 };
 
 const DataProvider: React.FC<Props> = ({ children }) => {
@@ -137,6 +162,12 @@ const DataProvider: React.FC<Props> = ({ children }) => {
                     JSON.stringify(dataRef.current.transactions),
                 );
             }
+            const minData = {
+                income: new Date('2024-01-21T00:00:00.000Z'),
+                expense: new Date('2024-01-21T00:00:00.000Z'),
+                all: new Date('2024-01-21T00:00:00.000Z'),
+            };
+            localStorage.setItem('metaMinDateData', JSON.stringify(minData));
         };
 
         window.addEventListener('beforeunload', handleWindowClose);
@@ -156,6 +187,7 @@ const DataProvider: React.FC<Props> = ({ children }) => {
                 incomeCount,
                 expenseCount,
                 initialDate: data.initialDate,
+                metaMinDateData: data.metaMinDateData,
                 dataDispatch: dispatch,
             }}
         >
