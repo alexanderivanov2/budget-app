@@ -11,7 +11,7 @@ const useTransactionsPagination = (transactionType: 'all' | 'income' | 'expense'
     const [currentPage, setCurrentPage] = useState(1);
 
     const extractionCountStep = TRANSACTIONS_PER_PAGE * 2;
-    const { extractedData, hasMore, collectNewExtractData, hasInitialExtraction, dateCursor } =
+    const { extractedData, hasMore, collectNewExtractData, hasInitialExtraction } =
         useExtractAllTransactions(extractionCountStep, true, transactionType);
 
     const extractedCount = extractedData.length;
@@ -23,14 +23,7 @@ const useTransactionsPagination = (transactionType: 'all' | 'income' | 'expense'
         startIndexPageTransactions + TRANSACTIONS_PER_PAGE,
     );
 
-    const itemsCount =
-        transactionType === 'all'
-            ? transactionsCount
-            : transactionType === 'income'
-              ? incomeCount
-              : expenseCount;
-
-    const pageCount = Math.ceil(itemsCount / TRANSACTIONS_PER_PAGE);
+    const pageCount = Math.ceil(extractedCount / TRANSACTIONS_PER_PAGE);
 
     const lockMount = useRef(true);
     useEffect(() => {
@@ -55,7 +48,7 @@ const useTransactionsPagination = (transactionType: 'all' | 'income' | 'expense'
     }, [transactionType]);
 
     return {
-        count: itemsCount,
+        count: extractedCount,
         currentPage,
         pageCount,
         currentPageTransactions,
