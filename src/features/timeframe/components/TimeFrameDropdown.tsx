@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { TimeFrameType } from '../types/timeframe.types';
 import { useTimeFrameContext } from './TimeFrameContext';
 
-const DROPDOWN_ITEMS: TimeFrameType[] = ['allTime', 'year', 'month', 'day', 'custom'];
+const DROPDOWN_ITEMS: TimeFrameType[] = ['allTime', 'year', 'month', 'day'];
 
 interface Props {
     className?: string;
