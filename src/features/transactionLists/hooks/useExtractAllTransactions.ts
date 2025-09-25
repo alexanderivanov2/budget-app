@@ -1,46 +1,37 @@
 import { useEffect, useState, useRef, type RefObject } from 'react';
 import { useDataContext } from '../../../context/DataContext';
-import { getDaysInMonth } from '../../../utils/dateUtils';
 import type { Data, typeData } from '../../../context/types/DataContextTypes';
+import { useTimeFrameContext } from '../../timeframe/components/TimeFrameContext';
 
-const EXTRACT_LIMIT_STEP = 20;
-
-type InitialDate = {
-    year: number;
-    month: number;
-    day: number;
+const cloneDate = (date: Date) => {
+    const cloneDateObj = new Date(date);
+    cloneDateObj.setHours(0, 0, 0, 0);
+    return cloneDateObj;
 };
+
+const EXTRACT_MIN_STEP_COUNT = 20;
 
 type ExtractType = 'all' | 'income' | 'expense';
 
 const useExtractAllTransactions = (
-    initialDate: InitialDate,
-    extractLimitStep = EXTRACT_LIMIT_STEP,
+    extractMinLimitStep = EXTRACT_MIN_STEP_COUNT,
     initialExtraction: boolean = false,
     extractType: ExtractType = 'all',
 ) => {
     const [extractedData, setExtractedData] = useState<typeData[]>([]);
-    const { incomeData, expenseData, transactionsCount, incomeCount, expenseCount } =
-        useDataContext();
+    const { incomeData, expenseData, metaMinDateData, initialDate } = useDataContext();
+    const { startDate, endDate } = useTimeFrameContext();
+
+    const dateCursor = useRef(startDate || initialDate);
+
     const hasInitialExtraction = useRef(initialExtraction);
-    const dateCursor = useRef({ ...initialDate });
 
-    const extractedCount = extractedData.length;
-    const extractedTypeCount =
-        extractType === 'all'
-            ? transactionsCount
-            : extractType === 'income'
-              ? incomeCount
-              : expenseCount;
-    const hasMore = extractedTypeCount > extractedCount;
-
-    useEffect(() => {
-        if (hasInitialExtraction.current) {
-            hasInitialExtraction.current = false;
-            collectNewExtractData();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    const extractedTypeEndDate =
+        endDate ||
+        (metaMinDateData?.[extractType] ? cloneDate(metaMinDateData?.[extractType]) : null);
+    const hasMore = extractedTypeEndDate
+        ? dateCursor?.current?.getTime() >= extractedTypeEndDate?.getTime()
+        : false;
 
     const checkDateRecordExist = (dataArr: Data[], year: number, month?: number, day?: number) => {
         const typePattern = day ? 'dayExist' : month ? 'monthExist' : 'yearExist';
@@ -60,6 +51,7 @@ const useExtractAllTransactions = (
 
     const getDayTransactions = (y: number, m: number, d: number) => {
         let dayTransactionsList: typeData[] = [];
+
         if (extractType !== 'expense') {
             dayTransactionsList = [...(incomeData[y]?.[m]?.[d] || [])];
         }
@@ -71,94 +63,43 @@ const useExtractAllTransactions = (
         return dayTransactionsList;
     };
 
-    const extractDataPerLimit = (
-        dataArr: Data[],
-        dateCursorData: RefObject<{ year: number; month: number; day: number }>,
-        year: number,
-        startMonth: number,
-    ) => {
+    const collectDayTransactions = (dataArr: Data[], year: number, month: number, day: number) => {
         let extractDataArr: typeData[] = [];
-        let day = 1;
-        let month = 1;
-        for (let m = startMonth; m > 0; m--) {
-            month = m;
-            if (!checkDateRecordExist(dataArr, year, m)) {
-                continue;
-            }
-            const startDay =
-                year === dateCursorData.current.year && m === dateCursorData.current.month
-                    ? dateCursorData.current.day
-                    : getDaysInMonth(year, m);
+        if (!checkDateRecordExist(dataArr, year, month, day)) return;
 
-            for (let d = startDay; d > 0; d--) {
-                day = d;
-                if (checkDateRecordExist(dataArr, year, m, d)) {
-                    const dayTransactions = getDayTransactions(year, m, d).sort(
-                        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-                    );
+        const dayTransactions = getDayTransactions(year, month, day).sort(
+            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+        );
 
-                    extractDataArr = [...extractDataArr, ...dayTransactions];
-                    if (extractDataArr.length >= extractLimitStep) {
-                        return {
-                            data: extractDataArr,
-                            date: {
-                                year,
-                                month: m,
-                                day: d,
-                            },
-                        };
-                    }
-                }
-            }
-        }
+        extractDataArr = [...extractDataArr, ...dayTransactions];
 
-        return {
-            data: extractDataArr,
-            date: {
-                year,
-                month,
-                day,
-            },
-        };
+        return extractDataArr;
     };
 
-    const extractDataRecordsPerLimit = (
-        dataArr: Data[],
-        dateCursorData: RefObject<{ year: number; month: number; day: number }>,
-    ) => {
+    const collectDayTransactionsRecords = (dataArr: Data[], dateCursorData: RefObject<Date>) => {
         let extractDataRecord: typeData[] = [];
-        let cursorUpdate = { ...dateCursorData.current };
-        let { year } = cursorUpdate;
+        const cursorUpdate = cloneDate(dateCursorData.current);
 
-        while (year >= 2000) {
-            if (!checkDateRecordExist(dataArr, year)) {
-                year--;
+        while (
+            extractDataRecord.length < extractMinLimitStep &&
+            cursorUpdate.getTime() >= (extractedTypeEndDate?.getTime() || new Date().getTime())
+        ) {
+            const year = cursorUpdate.getFullYear();
+            const month = cursorUpdate.getMonth() + 1;
+            const day = cursorUpdate.getDate();
+
+            if (!checkDateRecordExist(dataArr, year, month, day)) {
+                cursorUpdate.setDate(cursorUpdate.getDate() - 1);
                 continue;
             }
 
-            let month = year === cursorUpdate.year ? cursorUpdate.month : 12;
-            let day = getDaysInMonth(year, month);
+            const data = collectDayTransactions(dataArr, year, month, day);
 
-            const { data, date } = extractDataPerLimit(dataArr, dateCursorData, year, month);
-
-            extractDataRecord = [...extractDataRecord, ...data];
-            year = (date.day == 1 && date.month) == 1 ? year - 1 : year;
-            month = date.day != 1 ? date.month : date.month == 1 ? 12 : month - 1;
-            day = date.day == 1 ? getDaysInMonth(year, month) : date.day - 1;
-
-            cursorUpdate = {
-                year,
-                month,
-                day,
-            };
-
-            if (extractDataRecord.length >= extractLimitStep) {
-                return {
-                    extractData: extractDataRecord,
-                    cursorUpdate,
-                };
+            if (data) {
+                extractDataRecord = [...extractDataRecord, ...data];
             }
-            year--;
+
+            cursorUpdate.setDate(cursorUpdate.getDate() - 1);
         }
 
         return {
@@ -166,8 +107,6 @@ const useExtractAllTransactions = (
             cursorUpdate,
         };
     };
-
-    const inFlightRef = useRef(false);
 
     const getDataArr = () => {
         if (extractType === 'all') {
@@ -177,33 +116,43 @@ const useExtractAllTransactions = (
         }
     };
 
+    const inFlightRef = useRef(false);
+
     function collectNewExtractData() {
         if (inFlightRef.current) return;
         inFlightRef.current = true;
-        // const dataArr = [expenseData, incomeData];
-        const dataArr = getDataArr();
 
-        const { extractData, cursorUpdate } = extractDataRecordsPerLimit(dataArr, dateCursor);
-        setExtractedData((prevExtractedData) => {
-            return [...prevExtractedData, ...extractData];
-        });
+        try {
+            const dataArr = getDataArr();
 
-        dateCursor.current = { ...cursorUpdate };
+            const { extractData, cursorUpdate } = collectDayTransactionsRecords(
+                dataArr,
+                dateCursor,
+            );
+            setExtractedData((prevExtractedData) => {
+                return [...prevExtractedData, ...extractData];
+            });
+
+            dateCursor.current = new Date(cursorUpdate);
+        } finally {
+            inFlightRef.current = false;
+        }
     }
 
     useEffect(() => {
-        if (!inFlightRef.current) return;
-        inFlightRef.current = false;
-    }, [extractedCount]);
+        if (hasInitialExtraction.current) {
+            hasInitialExtraction.current = false;
+            collectNewExtractData();
+        }
+    }, []);
 
     return {
         extractedData,
         collectNewExtractData,
         dateCursor,
         hasMore,
-        extractedCount,
-        extractedTypeCount,
         hasInitialExtraction,
+        extractedMinLastDate: extractedTypeEndDate,
     };
 };
 
