@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { useDataContext } from '../../../context/DataContext';
-import { getYearMonthDay } from '../../../utils/dateUtils';
 import useExtractAllTransactions from '../hooks/useExtractAllTransactions';
 import TransactionListItem from './TransactionListItem';
 import VirtualizedList from '../../../components/virtualizedList/VirtualizedList';
@@ -15,15 +14,12 @@ type Props = {
 const TransactionsInifiniteScroll: React.FC<Props> = ({ transactionType }) => {
     const infiniteScrollContainer = useRef<HTMLDivElement>(null);
     const sentielRef = useRef<HTMLDivElement>(null);
-    const { transactions, initialDate } = useDataContext();
-    const yearMonthDayDate = getYearMonthDay(initialDate);
+    const { transactions } = useDataContext();
     const { extractedData, collectNewExtractData, hasMore } = useExtractAllTransactions(
-        yearMonthDayDate,
         EXTRACT_PER_PAGE,
         false,
         transactionType,
     );
-    const extractedLength = extractedData.length;
 
     useEffect(() => {
         const target = sentielRef.current;
@@ -47,38 +43,9 @@ const TransactionsInifiniteScroll: React.FC<Props> = ({ transactionType }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    useEffect(() => {
-        const container = sentielRef.current?.parentElement;
-        if (!container) return;
-
-        let cancelled = false;
-
-        if (container.scrollHeight >= container.clientHeight || !hasMore) return;
-        const fillPooling = () => {
-            if (cancelled) return;
-            if (container.scrollHeight >= container.clientHeight || !hasMore) return;
-            collectNewExtractData();
-
-            setTimeout(fillPooling, 0);
-        };
-
-        fillPooling();
-
-        return () => {
-            cancelled = true;
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        hasMore,
-        extractedData,
-        infiniteScrollContainer.current?.scrollHeight,
-        infiniteScrollContainer.current?.clientHeight,
-    ]);
-
     return (
         <div className="transactions-infinite-scroll">
             <h2>Infinite Scroll</h2>
-            <p>LOADED LENGTH: {extractedLength}</p>
             <VirtualizedList
                 data={extractedData}
                 component={TransactionListItem}

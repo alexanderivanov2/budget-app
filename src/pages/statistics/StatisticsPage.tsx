@@ -2,10 +2,14 @@ import { useState } from 'react';
 import TransactionList from '../../features/transactionLists/components/TransactionsList';
 import TransactionsPagination from '../../features/transactionLists/components/TransactionsPagination';
 import TransactionsInifiniteScroll from '../../features/transactionLists/components/TransactionsInfiniteScroll';
+import TimeFrameDropdown from '../../features/timeframe/components/TimeFrameDropdown';
+import TimeFrameNavigator from '../../features/timeframe/components/TimeFrameNavigator';
+import { useTimeFrameContext } from '../../features/timeframe/components/TimeFrameContext';
 
 export const StatisticsPage = () => {
     const [transactionsVariant, setTransactionsVariant] = useState('list');
     const [transactionsType, setTransactionsType] = useState<'all' | 'income' | 'expense'>('all');
+    const { startDate } = useTimeFrameContext();
 
     const changeTransactionsVariant = (variant: string) => {
         setTransactionsVariant(variant);
@@ -30,14 +34,22 @@ export const StatisticsPage = () => {
                 <button onClick={() => changeTransactionsType('income')}>Income</button>
                 <button onClick={() => changeTransactionsType('expense')}>Expense</button>
             </div>
+            <TimeFrameDropdown />
+            <TimeFrameNavigator />
             {transactionsVariant === 'list' ? (
-                <TransactionList transactionType={transactionsType} key={transactionsType} />
+                <TransactionList
+                    transactionType={transactionsType}
+                    key={`${transactionsType}-${startDate?.getTime()}`}
+                />
             ) : transactionsVariant === 'pagination' ? (
-                <TransactionsPagination transactionType={transactionsType} key={transactionsType} />
+                <TransactionsPagination
+                    transactionType={transactionsType}
+                    key={`${transactionsType}-${startDate?.getTime()}`}
+                />
             ) : (
                 <TransactionsInifiniteScroll
                     transactionType={transactionsType}
-                    key={transactionsType}
+                    key={`${transactionsType}-${startDate?.getTime()}`}
                 />
             )}
         </div>

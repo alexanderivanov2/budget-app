@@ -6,22 +6,11 @@ type Props = {
 };
 
 const TransactionsPagination: React.FC<Props> = ({ transactionType }) => {
-    const {
-        count,
-        pageCount,
-        currentPage,
-        currentPageTransactions,
-        transactions,
-        extractedData,
-        setCurrentPage,
-    } = useTransactionsPagination(transactionType);
+    const { pageCount, currentPage, currentPageTransactions, transactions, setCurrentPage } =
+        useTransactionsPagination(transactionType);
     return (
         <div>
             <h2>PAGINATION LIST</h2>
-            <p>Transactions Count: {count}</p>
-            <p>Current Page {currentPage}</p>
-            <p>PAGE COUNT: {pageCount} </p>
-            <p>Extracted Data Transactions: {extractedData.length}</p>
             {currentPageTransactions.map((transaction) => {
                 return (
                     <TransactionListItem key={transaction.id} data={transactions[transaction.id]} />

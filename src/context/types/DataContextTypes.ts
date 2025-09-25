@@ -22,6 +22,12 @@ export interface Data {
     };
 }
 
+export interface MetaMinDateData {
+    income: Date | null;
+    expense: Date | null;
+    all: Date | null;
+}
+
 export interface DataContextType {
     transactions: Record<string, TransferData>;
     incomeData: Data;
@@ -30,6 +36,7 @@ export interface DataContextType {
     incomeCount: number;
     expenseCount: number;
     initialDate: Date;
+    metaMinDateData: MetaMinDateData;
     dataDispatch: React.Dispatch<Action>;
 }
 
@@ -38,4 +45,7 @@ export type State = {
     incomeData: Data;
     expenseData: Data;
     initialDate: Date;
+    metaMinDateData: MetaMinDateData;
 };
+
+export type TransactionsTypes = 'all' | 'income' | 'expense';
