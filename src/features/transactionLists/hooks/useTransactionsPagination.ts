@@ -5,8 +5,7 @@ import useExtractAllTransactions from './useExtractAllTransactions';
 const TRANSACTIONS_PER_PAGE = 10;
 
 const useTransactionsPagination = (transactionType: 'all' | 'income' | 'expense' = 'all') => {
-    const { transactions, transactionsCount, expenseCount, incomeCount, initialDate } =
-        useDataContext();
+    const { transactions } = useDataContext();
 
     const [currentPage, setCurrentPage] = useState(1);
 

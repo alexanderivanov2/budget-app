@@ -27,6 +27,16 @@ interface TransactionForm {
     date: FieldWithDate;
 }
 
+export interface FullTransactionForm {
+    amount: FieldWithString;
+    description: FieldWithString;
+    category: FieldWithString;
+    budget: FieldWithString;
+    date: FieldWithDate;
+    id: string;
+    type: 'expense' | 'income';
+}
+
 const TRANSACTION_INPUTS_INITAL_STATE: TransactionForm = {
     amount: {
         value: '',
@@ -49,7 +59,37 @@ const TRANSACTION_INPUTS_INITAL_STATE: TransactionForm = {
     },
 };
 
-const createInitialForm = (): TransactionForm => {
+const createInitialForm = (data?: TransferData) => {
+    if (data) {
+        return createInitialFormWithData(data);
+    }
+    return createInitialEmptyForm();
+};
+
+const createInitialFormWithData = (formData: TransferData) => {
+    const initialForm = {} as FullTransactionForm;
+
+    FORM_KEYS.forEach((keyValue) => {
+        if (keyValue === 'date') {
+            initialForm[keyValue] = { ...TRANSACTION_INPUTS_INITAL_STATE[keyValue] };
+            if (formData[keyValue] && typeof formData[keyValue] === 'string') {
+                initialForm[keyValue].value = new Date(formData[keyValue]);
+            }
+        } else {
+            initialForm[keyValue] = {
+                ...(TRANSACTION_INPUTS_INITAL_STATE[keyValue] as FieldWithString),
+            };
+
+            if (initialForm[keyValue] && typeof formData[keyValue] === 'string') {
+                initialForm[keyValue].value = formData[keyValue];
+            }
+        }
+    });
+
+    return initialForm;
+};
+
+const createInitialEmptyForm = (): TransactionForm => {
     const initialForm = {} as TransactionForm;
 
     FORM_KEYS.forEach((keyValue) => {
@@ -65,9 +105,9 @@ const createInitialForm = (): TransactionForm => {
     return initialForm;
 };
 
-const useTransactionForm = (formType: 'income' | 'expense') => {
-    const [transactionForm, setTransactionForm] = useState<TransactionForm>(() =>
-        createInitialForm(),
+const useTransactionForm = (formType: 'income' | 'expense', transaction?: TransferData) => {
+    const [transactionForm, setTransactionForm] = useState<TransactionForm | FullTransactionForm>(
+        () => createInitialForm(transaction),
     );
     const { dataDispatch } = useDataContext();
     const dateInputValue = dateToStringValue(transactionForm.date.value);
@@ -199,6 +239,22 @@ const useTransactionForm = (formType: 'income' | 'expense') => {
         handleResetForm();
     };
 
+    const handleSubmitEdit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const isValid = validateSubmit();
+
+        if (!isValid) {
+            console.log('Form is invalid');
+            return;
+        }
+
+        const payload = Object.fromEntries(
+            Object.entries(transactionForm).map(([key, field]) => [key, field.value]),
+        ) as TransferData;
+        return { ...payload };
+    };
+
     const handleResetForm = () => setTransactionForm(createInitialForm());
 
     return {
@@ -206,7 +262,8 @@ const useTransactionForm = (formType: 'income' | 'expense') => {
         selectedDate: dateInputValue,
         handleChange,
         handleBlur,
-        handleSubmit,
+        handleSubmitForm: handleSubmit,
+        handleSubmitEditForm: handleSubmitEdit,
         handleResetForm,
     };
 };

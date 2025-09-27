@@ -2,6 +2,7 @@ import type React from 'react';
 import FormField from '../../components/ui/input/FormField';
 import useTransactionForm from './hooks/useTransactionForm';
 import { useLocation } from 'react-router-dom';
+import type { TransferData } from '../../context/types/DataContextTypes';
 
 const SELECT_CATEGORY_DATA = {
     income: {
@@ -18,25 +19,47 @@ const SELECT_CATEGORY_DATA = {
     },
 };
 
+type TransactionTypes = 'income' | 'expense';
+
 interface Props {
-    title?: string;
+    title?: TransactionTypes;
+    formType?: 'create' | 'edit';
+    // formData?: FullTransactionForm;
+    formData?: TransferData;
 }
 
-const TransactionForm: React.FC<Props> = ({ title }) => {
+const TransactionForm: React.FC<Props> = ({ title, formType, formData }) => {
     const location = useLocation();
-    const transactionFormType = location.pathname.includes('expenses') ? 'expense' : 'income';
+    const transactionFormType: TransactionTypes = (
+        title || (location.pathname.includes('expenses') ? 'expense' : 'income')
+    ).toLowerCase() as TransactionTypes;
+
     const {
         form: transactionForm,
         selectedDate,
-        handleSubmit,
+        handleSubmitForm,
+        handleSubmitEditForm,
         handleChange,
         handleBlur,
-    } = useTransactionForm(transactionFormType);
+    } = useTransactionForm(transactionFormType, formData);
     const selectCategoryData = SELECT_CATEGORY_DATA[transactionFormType];
 
+    const handleSubmit = (e: React.FormEvent) => {
+        if (formType === 'edit') {
+            const data = handleSubmitEditForm(e);
+            console.log(data);
+            return;
+        }
+
+        handleSubmitForm(e);
+    };
+
     return (
-        <form onSubmit={handleSubmit} className={`form-${transactionFormType}`}>
-            {title && <h6 className="transaction-form-title">{title}</h6>}
+        <form
+            onSubmit={(e: React.FormEvent) => handleSubmit(e)}
+            className={`form-${transactionFormType}`}
+        >
+            {title && <h6 className="transaction-form-title">{title.toUpperCase()}</h6>}
             <FormField
                 label={{
                     htmlFor: 'transactionBudget',
@@ -155,7 +178,7 @@ const TransactionForm: React.FC<Props> = ({ title }) => {
                     })}
                 </select>
             </FormField>
-            <button type="submit">Add</button>
+            <button type="submit">{formType === 'edit' ? 'Edit' : 'Add'}</button>
         </form>
     );
 };

@@ -3,7 +3,7 @@ import TransactionForm from '../../features/transactionForm/TransactionForm';
 const ExpensePage = () => {
     return (
         <div>
-            <TransactionForm title="Expense" />
+            <TransactionForm title="expense" />
         </div>
     );
 };
