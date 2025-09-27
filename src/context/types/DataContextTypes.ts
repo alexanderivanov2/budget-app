@@ -8,7 +8,10 @@ export interface TransferData {
     type: 'income' | 'expense';
 }
 
-export type Action = { type: 'addIncome' | 'addExpense' | 'setDate'; payload: TransferData };
+export type Action = {
+    type: 'addIncome' | 'addExpense' | 'setDate' | 'deleteTransaction';
+    payload: TransferData;
+};
 
 export type typeData = {
     id: string;

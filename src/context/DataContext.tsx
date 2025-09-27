@@ -108,6 +108,33 @@ const dataReducer = (state: State, action: Action) => {
         case 'setDate': {
             return { ...state };
         }
+        case 'deleteTransaction': {
+            const { type, date, id } = action.payload;
+            const { year, month, day } = getYearMonthDay(new Date(date));
+            const dataKey: 'incomeData' | 'expenseData' = `${type}Data`;
+            const data = state[dataKey]?.[year]?.[month]?.[day];
+            console.trace('where');
+            if (data) {
+                console.log(data);
+                const newDayData = data.filter((transaction) => transaction.id !== id);
+                const { [id]: _removedTransaction, ...newTransactions } = { ...state.transactions };
+                return {
+                    ...state,
+                    transactions: newTransactions,
+                    [dataKey]: {
+                        ...state[dataKey],
+                        [year]: {
+                            ...state[dataKey][year],
+                            [month]: {
+                                ...state[dataKey][year][month],
+                                [day]: newDayData,
+                            },
+                        },
+                    },
+                };
+            }
+            return { ...state };
+        }
     }
 };
 

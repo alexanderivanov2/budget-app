@@ -1,10 +1,18 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDataContext } from '../../context/DataContext';
 
 const TransactionDetailsPage = () => {
     const { id } = useParams();
-    const { transactions } = useDataContext();
+    const navigate = useNavigate();
+    const { transactions, dataDispatch } = useDataContext();
     const transactionDetails = id ? transactions[id] : null;
+
+    const handleDeleteTransaction = () => {
+        if (transactionDetails) {
+            navigate(-1);
+            dataDispatch({ type: 'deleteTransaction', payload: transactionDetails });
+        }
+    };
 
     return (
         <div className="transaction-details-page">
@@ -28,7 +36,7 @@ const TransactionDetailsPage = () => {
                     </div>{' '}
                     <div className="transaction-details-controls">
                         <button>Edit</button>
-                        <button>Delete</button>
+                        <button onClick={handleDeleteTransaction}>Delete</button>
                     </div>
                 </div>
             ) : (
