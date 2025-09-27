@@ -7,6 +7,7 @@ import IncomePage from '../pages/transactions//IncomePage';
 import ExpensePage from '../pages/transactions/ExpensePage';
 import { StatisticsPage } from '../pages/statistics/StatisticsPage';
 import TimeFrameProvider from '../features/timeframe/components/TimeFrameContext';
+import TransactionDetailsPage from '../pages/transactionDetails/TransactionDetailsPage';
 
 const router = createBrowserRouter([
     {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
                     {
                         path: 'expenses',
                         element: <ExpensePage />,
+                    },
+                    {
+                        path: ':id',
+                        element: <TransactionDetailsPage />,
                     },
                 ],
             },
