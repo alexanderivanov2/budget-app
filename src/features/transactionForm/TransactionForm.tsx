@@ -3,6 +3,7 @@ import FormField from '../../components/ui/input/FormField';
 import useTransactionForm from './hooks/useTransactionForm';
 import { useLocation } from 'react-router-dom';
 import type { TransferData } from '../../context/types/DataContextTypes';
+import { useDataContext } from '../../context/DataContext';
 
 const SELECT_CATEGORY_DATA = {
     income: {
@@ -30,6 +31,7 @@ interface Props {
 
 const TransactionForm: React.FC<Props> = ({ title, formType, formData, submitHandler }) => {
     const location = useLocation();
+    const { dataDispatch } = useDataContext();
     const transactionFormType: TransactionTypes = (
         title || (location.pathname.includes('expenses') ? 'expense' : 'income')
     ).toLowerCase() as TransactionTypes;
@@ -47,7 +49,13 @@ const TransactionForm: React.FC<Props> = ({ title, formType, formData, submitHan
     const handleSubmit = (e: React.FormEvent) => {
         if (formType === 'edit') {
             const data = handleSubmitEditForm(e);
-            console.log(data);
+            if (data) {
+                dataDispatch({
+                    type: 'editTransaction',
+                    payload: data as TransferData,
+                });
+            }
+
             if (submitHandler) {
                 submitHandler();
             }
