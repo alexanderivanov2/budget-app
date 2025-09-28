@@ -72,7 +72,7 @@ const createInitialFormWithData = (formData: TransferData) => {
     FORM_KEYS.forEach((keyValue) => {
         if (keyValue === 'date') {
             initialForm[keyValue] = { ...TRANSACTION_INPUTS_INITAL_STATE[keyValue] };
-            if (formData[keyValue] && typeof formData[keyValue] === 'string') {
+            if (formData[keyValue] && new Date(formData[keyValue])?.getTime()) {
                 initialForm[keyValue].value = new Date(formData[keyValue]);
             }
         } else {
@@ -111,7 +111,6 @@ const useTransactionForm = (formType: 'income' | 'expense', transaction?: Transf
     );
     const { dataDispatch } = useDataContext();
     const dateInputValue = dateToStringValue(transactionForm.date.value);
-
     const validateInput = (key: FormKey, value: string | Date) => {
         const validateObj = { key, errorMessage: '', isValid: true };
         if (value === '') {
@@ -252,6 +251,10 @@ const useTransactionForm = (formType: 'income' | 'expense', transaction?: Transf
         const payload = Object.fromEntries(
             Object.entries(transactionForm).map(([key, field]) => [key, field.value]),
         ) as TransferData;
+
+        payload.id = transaction!.id;
+        payload.type = transaction!.type;
+
         return { ...payload };
     };
 
