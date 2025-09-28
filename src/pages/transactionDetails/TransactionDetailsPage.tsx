@@ -1,9 +1,11 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDataContext } from '../../context/DataContext';
 import TransactionForm from '../../features/transactionForm/TransactionForm';
+import { useState } from 'react';
 
 const TransactionDetailsPage = () => {
     const { id } = useParams();
+    const [showEdit, setShowEdit] = useState(false);
     const navigate = useNavigate();
     const { transactions, dataDispatch } = useDataContext();
     const transactionDetails = id ? transactions[id] : null;
@@ -13,6 +15,10 @@ const TransactionDetailsPage = () => {
             navigate(-1);
             dataDispatch({ type: 'deleteTransaction', payload: transactionDetails });
         }
+    };
+
+    const handleEdit = () => {
+        setShowEdit((prevShowEdit: boolean) => !prevShowEdit);
     };
 
     return (
@@ -37,15 +43,18 @@ const TransactionDetailsPage = () => {
                             </p>
                         </div>{' '}
                         <div className="transaction-details-controls">
-                            <button>Edit</button>
+                            <button onClick={handleEdit}>Edit</button>
                             <button onClick={handleDeleteTransaction}>Delete</button>
                         </div>
                     </div>
-                    <TransactionForm
-                        title={transactionDetails?.type}
-                        formType="edit"
-                        formData={transactionDetails}
-                    />
+                    {showEdit && (
+                        <TransactionForm
+                            title={transactionDetails?.type}
+                            formType="edit"
+                            formData={transactionDetails}
+                            submitHandler={handleEdit}
+                        />
+                    )}
                 </>
             ) : (
                 'TRANSACTION DOESN`T EXIST'

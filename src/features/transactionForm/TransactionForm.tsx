@@ -24,11 +24,11 @@ type TransactionTypes = 'income' | 'expense';
 interface Props {
     title?: TransactionTypes;
     formType?: 'create' | 'edit';
-    // formData?: FullTransactionForm;
     formData?: TransferData;
+    submitHandler?: () => void;
 }
 
-const TransactionForm: React.FC<Props> = ({ title, formType, formData }) => {
+const TransactionForm: React.FC<Props> = ({ title, formType, formData, submitHandler }) => {
     const location = useLocation();
     const transactionFormType: TransactionTypes = (
         title || (location.pathname.includes('expenses') ? 'expense' : 'income')
@@ -48,6 +48,9 @@ const TransactionForm: React.FC<Props> = ({ title, formType, formData }) => {
         if (formType === 'edit') {
             const data = handleSubmitEditForm(e);
             console.log(data);
+            if (submitHandler) {
+                submitHandler();
+            }
             return;
         }
 
