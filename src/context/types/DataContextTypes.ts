@@ -9,7 +9,7 @@ export interface TransferData {
 }
 
 export type Action = {
-    type: 'addIncome' | 'addExpense' | 'setDate' | 'deleteTransaction';
+    type: 'addIncome' | 'addExpense' | 'setDate' | 'deleteTransaction' | 'editTransaction';
     payload: TransferData;
 };
 

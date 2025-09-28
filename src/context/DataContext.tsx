@@ -7,6 +7,7 @@ import type {
     TransactionsTypes,
 } from './types/DataContextTypes';
 import { getYearMonthDay } from '../utils/dateUtils';
+import { X } from 'react-feather';
 
 const DataContext = createContext<DataContextType>({
     transactions: {},
@@ -113,7 +114,7 @@ const dataReducer = (state: State, action: Action) => {
             const { year, month, day } = getYearMonthDay(new Date(date));
             const dataKey: 'incomeData' | 'expenseData' = `${type}Data`;
             const data = state[dataKey]?.[year]?.[month]?.[day];
-            console.trace('where');
+
             if (data) {
                 console.log(data);
                 const newDayData = data.filter((transaction) => transaction.id !== id);
@@ -134,6 +135,114 @@ const dataReducer = (state: State, action: Action) => {
                 };
             }
             return { ...state };
+        }
+        case 'editTransaction': {
+            const { type, date, id } = action.payload;
+            if (!date) return state;
+
+            const { year, month, day } = getYearMonthDay(new Date(date));
+            const dataKey: 'incomeData' | 'expenseData' = `${type}Data`;
+            const data = state?.[dataKey]?.[year]?.[month]?.[day] ?? [];
+            const transactionData = state.transactions[id];
+
+            if (transactionData) {
+                console.log(data);
+                const { date: transactionDate } = transactionData;
+                if (!transactionDate) return state;
+
+                const {
+                    year: trYear,
+                    month: trMonth,
+                    day: trDay,
+                } = getYearMonthDay(new Date(transactionDate));
+
+                const isSameDate = trYear === year && trMonth === month && trDay === day;
+
+                if (isSameDate) {
+                    const newDayData = data.map((transaction) => {
+                        if (transaction.id === id) {
+                            return {
+                                id,
+                                date: date,
+                            };
+                        }
+                        return transaction;
+                    });
+                    return {
+                        ...state,
+                        transactions: {
+                            ...state.transactions,
+                            [id]: { ...action.payload },
+                        },
+                        [dataKey]: {
+                            ...(state[dataKey] || {}),
+                            [year]: {
+                                ...(state?.[dataKey]?.[year] || {}),
+                                [month]: {
+                                    ...(state?.[dataKey]?.[year]?.[month] || {}),
+                                    [day]: newDayData,
+                                },
+                            },
+                        },
+                    };
+                }
+
+                const filterOldDay =
+                    state?.[dataKey]?.[trYear]?.[trMonth]?.[trDay].filter(
+                        (dayTransaction) => dayTransaction.id !== transactionData.id,
+                    ) || [];
+                const newEditDay = [
+                    ...(state[dataKey]?.[year]?.[month]?.[day] || []),
+                    { id: action.payload.id, date: action.payload.date },
+                ];
+
+                if (trYear === year && trMonth === month) {
+                    return {
+                        ...state,
+                        transactions: {
+                            ...state.transactions,
+                            [id]: { ...action.payload },
+                        },
+                        [dataKey]: {
+                            ...(state?.[dataKey] || {}),
+                            [year]: {
+                                ...(state?.[dataKey]?.[year] || {}),
+                                [month]: {
+                                    ...(state?.[dataKey]?.[year]?.[month] || {}),
+                                    [trDay]: filterOldDay,
+                                    [day]: newEditDay,
+                                },
+                            },
+                        },
+                    };
+                }
+
+                return {
+                    ...state,
+                    transactions: {
+                        ...state.transactions,
+                        [id]: { ...action.payload },
+                    },
+                    [dataKey]: {
+                        ...(state[dataKey] || {}),
+                        [trYear]: {
+                            ...(state?.[dataKey]?.[trYear] || {}),
+                            [trMonth]: {
+                                ...(state?.[dataKey]?.[trYear]?.[trMonth] || {}),
+                                [trDay]: filterOldDay,
+                            },
+                        },
+                        [year]: {
+                            ...(state[dataKey]?.[year] || {}),
+                            [month]: {
+                                ...(state[dataKey]?.[year]?.[month] || {}),
+                                [day]: newEditDay,
+                            },
+                        },
+                    },
+                };
+            }
+            return state;
         }
     }
 };
