@@ -116,7 +116,6 @@ const dataReducer = (state: State, action: Action) => {
             const data = state[dataKey]?.[year]?.[month]?.[day];
 
             if (data) {
-                console.log(data);
                 const newDayData = data.filter((transaction) => transaction.id !== id);
                 const { [id]: _removedTransaction, ...newTransactions } = { ...state.transactions };
                 return {
@@ -146,7 +145,6 @@ const dataReducer = (state: State, action: Action) => {
             const transactionData = state.transactions[id];
 
             if (transactionData) {
-                console.log(data);
                 const { date: transactionDate } = transactionData;
                 if (!transactionDate) return state;
 
