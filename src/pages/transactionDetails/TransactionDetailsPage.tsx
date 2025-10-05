@@ -30,7 +30,7 @@ const TransactionDetailsPage = () => {
                         <div className="transaction-details-content">
                             <p>TRANSACTION ID: {id}</p>
                             <p>
-                                TRANSACTION DATE:{' '}
+                                TRANSACTION DATE:
                                 {new Date(transactionDetails.date).toLocaleDateString()}
                             </p>
                             <p>TRANSACTION TYPE: {transactionDetails.type}</p>

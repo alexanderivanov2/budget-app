@@ -49,7 +49,6 @@ const getStartEndDates = (currentDate: Date, timeFrameType: TimeFrameType) => {
         startEndDateResult.endDate = new Date(year, month, day);
     }
 
-    console.log(startEndDateResult);
     return startEndDateResult;
 };
 
