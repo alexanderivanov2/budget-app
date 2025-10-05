@@ -6,8 +6,7 @@ import type {
     State,
     TransactionsTypes,
 } from './types/DataContextTypes';
-import { getYearMonthDay } from '../utils/dateUtils';
-import { X } from 'react-feather';
+import { getYearMonthDay, isDatesEqual, isPastDate } from '../utils/dateUtils';
 
 const DataContext = createContext<DataContextType>({
     transactions: {},
@@ -242,6 +241,136 @@ const dataReducer = (state: State, action: Action) => {
             }
             return state;
         }
+        case 'dateUpdate': {
+            const { date, type, oldDate } = action.payload;
+            const allOldDate = state.metaMinDateData.all
+                ? new Date(state.metaMinDateData.all)
+                : new Date();
+
+            const isNewDateAllOld = isPastDate(date, allOldDate);
+
+            const minDateByType = state.metaMinDateData[type];
+
+            if (minDateByType) {
+                const minTypeDate = new Date(minDateByType);
+
+                const isNewDateOld = isPastDate(date, minTypeDate);
+
+                if (oldDate) {
+                    const { year, month, day } = getYearMonthDay(new Date(oldDate));
+                    // const oldDateTime = new Date(oldDate).getTime();
+
+                    const isOldMinData = isDatesEqual(oldDate, minTypeDate);
+
+                    // HERE WE NEED CHECK HOW REDUCER WILL UPDATE IF WE EXAMINATE IT AFTER CHANGE OR BEFORE  is they will be 1 or will be 0
+                    const isOldDateLast =
+                        (state[`${type}Data`]?.[year]?.[month]?.[day]?.length || 0) === 0;
+
+                    if (isNewDateOld) {
+                        return {
+                            ...state,
+                            metaMinDateData: isNewDateAllOld
+                                ? {
+                                      ...state.metaMinDateData,
+                                      [type]: date,
+                                      all: date,
+                                  }
+                                : {
+                                      ...state.metaMinDateData,
+                                      [type]: date,
+                                  },
+                        };
+                    }
+
+                    if (isOldMinData && !isNewDateOld && isOldDateLast) {
+                        // calculate new EarlyDate because we don't know is their newer
+
+                        // DONE FOR SINGLE TYPE. DO IT FOR ALL TIME ALSO.
+                        const currentYear = new Date().getFullYear();
+                        let checkedYear = year;
+                        let newOldDate = null;
+                        while (checkedYear <= currentYear && !newOldDate) {
+                            const recordMonthsInCheckedYear = Object.keys(
+                                state?.[`${type}Data`]?.[checkedYear],
+                            );
+
+                            if (!recordMonthsInCheckedYear.length) {
+                                checkedYear++;
+                                continue;
+                            }
+
+                            let checkedMonth = null;
+                            let checkedDay = null;
+
+                            recordMonthsInCheckedYear.forEach((m) => {
+                                const month = Number(m);
+                                const daysInMonth = Object.keys(
+                                    state?.[`${type}Data`]?.[checkedYear]?.[month] || {},
+                                );
+
+                                const dayWithRecords = daysInMonth.find((d) => {
+                                    const day = Number(d);
+                                    return state[`${type}Data`]?.[checkedYear]?.[month]?.[day]
+                                        .length;
+                                });
+
+                                if (dayWithRecords) {
+                                    checkedMonth = month;
+                                    checkedDay = Number(dayWithRecords);
+                                    return;
+                                }
+                            });
+
+                            if (checkedMonth && checkedDay) {
+                                newOldDate = new Date(checkedYear, checkedMonth - 1, checkedDay);
+                            }
+
+                            checkedYear++;
+                        }
+
+                        return {
+                            ...state,
+                            metaMinDateData: {
+                                ...state.metaMinDateData,
+                                [type]: newOldDate,
+                            },
+                        };
+                    }
+                }
+
+                if (!isNewDateOld) {
+                    return state;
+                }
+
+                return {
+                    ...state,
+                    metaMinDateData: isNewDateAllOld
+                        ? {
+                              ...state.metaMinDateData,
+                              [type]: date,
+                              all: date,
+                          }
+                        : {
+                              ...state.metaMinDateData,
+                              [type]: date,
+                          },
+                };
+            }
+
+            return {
+                ...state,
+                metaMinDateData: isNewDateAllOld
+                    ? {
+                          ...state.metaMinDateData,
+                          [type]: date,
+                          all: date,
+                      }
+                    : {
+                          ...state.metaMinDateData,
+                          [type]: date,
+                      },
+            };
+        }
     }
 };
 
@@ -296,12 +425,16 @@ const DataProvider: React.FC<Props> = ({ children }) => {
                     JSON.stringify(dataRef.current.transactions),
                 );
             }
-            const minData = {
-                income: new Date('2024-01-21T00:00:00.000Z'),
-                expense: new Date('2024-01-21T00:00:00.000Z'),
-                all: new Date('2024-01-21T00:00:00.000Z'),
-            };
-            localStorage.setItem('metaMinDateData', JSON.stringify(minData));
+            // EXAMINATE
+            // const minData = {
+            //     income: new Date('2024-01-21T00:00:00.000Z'),
+            //     expense: new Date('2024-01-21T00:00:00.000Z'),
+            //     all: new Date('2024-01-21T00:00:00.000Z'),
+            // };
+            localStorage.setItem(
+                'metaMinDateData',
+                JSON.stringify(dataRef.current.metaMinDateData),
+            );
         };
 
         window.addEventListener('beforeunload', handleWindowClose);
