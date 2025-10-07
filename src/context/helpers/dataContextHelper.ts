@@ -48,3 +48,16 @@ export const getNextNewMinData = ({ data, oldDate }: { data: Data; oldDate: Date
 
     return newOldDate;
 };
+
+export const isRecordExistInData = (
+    data: Data,
+    recordId: string,
+    date: {
+        year: number;
+        month: number;
+        day: number;
+    },
+) => {
+    const { year, month, day } = date;
+    return data?.[year]?.[month]?.[day]?.find((data) => data.id === recordId);
+};

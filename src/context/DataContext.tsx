@@ -7,7 +7,11 @@ import type {
     TransactionsTypes,
 } from './types/DataContextTypes';
 import { getYearMonthDay, isDatesEqual, isPastDate } from '../utils/dateUtils';
-import { getDayTransactionsCount, getNextNewMinData } from './helpers/dataContextHelper';
+import {
+    getDayTransactionsCount,
+    getNextNewMinData,
+    isRecordExistInData,
+} from './helpers/dataContextHelper';
 
 const DataContext = createContext<DataContextType>({
     transactions: {},
@@ -48,9 +52,12 @@ const dataReducer = (state: State, action: Action) => {
                 [action.payload.id]: action.payload,
             };
 
-            const isRecordExist = state.incomeData?.[year]?.[month]?.[day]?.find(
-                (item) => item.id === incomeDataItem.id,
-            );
+            const isRecordExist = isRecordExistInData(state.incomeData, incomeDataItem.id, {
+                year,
+                month,
+                day,
+            });
+
             if (!isRecordExist) {
                 return {
                     ...state,
@@ -82,9 +89,11 @@ const dataReducer = (state: State, action: Action) => {
                 [action.payload.id]: action.payload,
             };
 
-            const isRecordExist = state.expenseData?.[year]?.[month]?.[day]?.find(
-                (item) => item.id === expenseDataItem.id,
-            );
+            const isRecordExist = isRecordExistInData(state.expenseData, expenseDataItem.id, {
+                year,
+                month,
+                day,
+            });
 
             if (!isRecordExist) {
                 return {
@@ -269,30 +278,30 @@ const dataReducer = (state: State, action: Action) => {
         case 'dateUpdate': {
             const { date, type, oldDate } = action.payload;
             const stateTypeData = state[`${type}Data`];
-            const allOldDate = state.metaMinDateData.all
+            const minDateDataAllOldestDate = state.metaMinDateData.all
                 ? new Date(state.metaMinDateData.all)
                 : new Date();
 
-            const isNewDateAllOld = isPastDate(date, allOldDate);
+            const isNewDateAllOldest = isPastDate(date, minDateDataAllOldestDate);
 
             const minDateByType = state.metaMinDateData[type];
 
             if (minDateByType) {
                 const minTypeDate = new Date(minDateByType);
 
-                const isNewDateOld = isPastDate(date, minTypeDate);
+                const isNewDateOldest = isPastDate(date, minTypeDate);
 
                 if (oldDate) {
-                    const isOldMinData = isDatesEqual(oldDate, minTypeDate);
-                    const isOldDateLast = !getDayTransactionsCount(
+                    const isOldOldestMinData = isDatesEqual(oldDate, minTypeDate);
+                    const isOldOldestDateSingle = !getDayTransactionsCount(
                         stateTypeData,
                         new Date(oldDate),
                     );
 
-                    if (isNewDateOld) {
+                    if (isNewDateOldest) {
                         return {
                             ...state,
-                            metaMinDateData: isNewDateAllOld
+                            metaMinDateData: isNewDateAllOldest
                                 ? {
                                       ...state.metaMinDateData,
                                       [type]: date,
@@ -305,13 +314,13 @@ const dataReducer = (state: State, action: Action) => {
                         };
                     }
 
-                    if (isOldMinData && !isNewDateOld && isOldDateLast) {
+                    if (isOldOldestMinData && !isNewDateOldest && isOldOldestDateSingle) {
                         const newOldDate = getNextNewMinData({ data: stateTypeData, oldDate });
-                        const isNewOldDateAllDate =
-                            newOldDate && isPastDate(newOldDate, allOldDate);
+                        const isNewMinDateAllDateOldest =
+                            newOldDate && isPastDate(newOldDate, minDateDataAllOldestDate);
                         return {
                             ...state,
-                            metaMinDateData: isNewOldDateAllDate
+                            metaMinDateData: isNewMinDateAllDateOldest
                                 ? {
                                       ...state.metaMinDateData,
                                       [type]: newOldDate,
@@ -325,13 +334,13 @@ const dataReducer = (state: State, action: Action) => {
                     }
                 }
 
-                if (!isNewDateOld) {
+                if (!isNewDateOldest) {
                     return state;
                 }
 
                 return {
                     ...state,
-                    metaMinDateData: isNewDateAllOld
+                    metaMinDateData: isNewDateAllOldest
                         ? {
                               ...state.metaMinDateData,
                               [type]: date,
@@ -346,7 +355,7 @@ const dataReducer = (state: State, action: Action) => {
 
             return {
                 ...state,
-                metaMinDateData: isNewDateAllOld
+                metaMinDateData: isNewDateAllOldest
                     ? {
                           ...state.metaMinDateData,
                           [type]: date,

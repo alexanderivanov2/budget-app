@@ -24,20 +24,23 @@ const resetDateHours = (date: Date) => {
     date.setHours(0, 0, 0, 0);
 };
 
-export const isPastDate = (dateA: Date, dateB: Date): boolean => {
-    const a = new Date(dateA);
-    const b = new Date(dateB);
-    resetDateHours(a);
-    resetDateHours(b);
+const resetDates = (...args: Date[]) => {
+    const resetedDates = args.map((date) => {
+        const d = new Date(date);
+        resetDateHours(d);
 
+        return d;
+    });
+
+    return resetedDates;
+};
+
+export const isPastDate = (dateA: Date, dateB: Date): boolean => {
+    const [a, b] = resetDates(dateA, dateB);
     return a.getTime() < b.getTime();
 };
 
 export const isDatesEqual = (dateA: Date, dateB: Date): boolean => {
-    const a = new Date(dateA);
-    const b = new Date(dateB);
-    resetDateHours(a);
-    resetDateHours(b);
-
+    const [a, b] = resetDates(dateA, dateB);
     return a.getTime() === b.getTime();
 };
