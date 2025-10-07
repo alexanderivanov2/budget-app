@@ -234,6 +234,7 @@ const useTransactionForm = (formType: 'income' | 'expense', transaction?: Transf
 
         const id = uuidv4();
         dataDispatch({ type: actionType, payload: { ...payload, id, type: formType } });
+        dataDispatch({ type: 'dateUpdate', payload: { date: payload.date, type: formType } });
 
         handleResetForm();
     };

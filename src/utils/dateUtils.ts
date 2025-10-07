@@ -1,4 +1,5 @@
 export const getYearMonthDay = (date: Date) => {
+    console.log(date);
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
@@ -17,4 +18,26 @@ export const getPrevMonthLastDay = (date: Date) => {
     const year = prevMonth !== 11 ? date.getFullYear() : date.getFullYear() - 1;
 
     return getDaysInMonth(year, prevMonth);
+};
+
+const resetDateHours = (date: Date) => {
+    date.setHours(0, 0, 0, 0);
+};
+
+export const isPastDate = (dateA: Date, dateB: Date): boolean => {
+    const a = new Date(dateA);
+    const b = new Date(dateB);
+    resetDateHours(a);
+    resetDateHours(b);
+
+    return a.getTime() < b.getTime();
+};
+
+export const isDatesEqual = (dateA: Date, dateB: Date): boolean => {
+    const a = new Date(dateA);
+    const b = new Date(dateB);
+    resetDateHours(a);
+    resetDateHours(b);
+
+    return a.getTime() === b.getTime();
 };

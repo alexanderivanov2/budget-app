@@ -6,8 +6,8 @@ import type {
     State,
     TransactionsTypes,
 } from './types/DataContextTypes';
-import { getYearMonthDay } from '../utils/dateUtils';
-import { X } from 'react-feather';
+import { getYearMonthDay, isDatesEqual, isPastDate } from '../utils/dateUtils';
+import { getDayTransactionsCount, getNextNewMinData } from './helpers/dataContextHelper';
 
 const DataContext = createContext<DataContextType>({
     transactions: {},
@@ -215,6 +215,30 @@ const dataReducer = (state: State, action: Action) => {
                     };
                 }
 
+                if (trYear === year) {
+                    return {
+                        ...state,
+                        transactions: {
+                            ...state.transactions,
+                            [id]: { ...action.payload },
+                        },
+                        [dataKey]: {
+                            ...(state?.[dataKey] || {}),
+                            [year]: {
+                                ...(state?.[dataKey]?.[year] || {}),
+                                [trMonth]: {
+                                    ...(state?.[dataKey]?.[year]?.[trMonth] || {}),
+                                    [day]: filterOldDay,
+                                },
+                                [month]: {
+                                    ...(state?.[dataKey]?.[year]?.[month] || {}),
+                                    [day]: newEditDay,
+                                },
+                            },
+                        },
+                    };
+                }
+
                 return {
                     ...state,
                     transactions: {
@@ -241,6 +265,98 @@ const dataReducer = (state: State, action: Action) => {
                 };
             }
             return state;
+        }
+        case 'dateUpdate': {
+            const { date, type, oldDate } = action.payload;
+            const stateTypeData = state[`${type}Data`];
+            const allOldDate = state.metaMinDateData.all
+                ? new Date(state.metaMinDateData.all)
+                : new Date();
+
+            const isNewDateAllOld = isPastDate(date, allOldDate);
+
+            const minDateByType = state.metaMinDateData[type];
+
+            if (minDateByType) {
+                const minTypeDate = new Date(minDateByType);
+
+                const isNewDateOld = isPastDate(date, minTypeDate);
+
+                if (oldDate) {
+                    const isOldMinData = isDatesEqual(oldDate, minTypeDate);
+                    const isOldDateLast = !getDayTransactionsCount(
+                        stateTypeData,
+                        new Date(oldDate),
+                    );
+
+                    if (isNewDateOld) {
+                        return {
+                            ...state,
+                            metaMinDateData: isNewDateAllOld
+                                ? {
+                                      ...state.metaMinDateData,
+                                      [type]: date,
+                                      all: date,
+                                  }
+                                : {
+                                      ...state.metaMinDateData,
+                                      [type]: date,
+                                  },
+                        };
+                    }
+
+                    if (isOldMinData && !isNewDateOld && isOldDateLast) {
+                        const newOldDate = getNextNewMinData({ data: stateTypeData, oldDate });
+                        const isNewOldDateAllDate =
+                            newOldDate && isPastDate(newOldDate, allOldDate);
+                        return {
+                            ...state,
+                            metaMinDateData: isNewOldDateAllDate
+                                ? {
+                                      ...state.metaMinDateData,
+                                      [type]: newOldDate,
+                                      all: newOldDate,
+                                  }
+                                : {
+                                      ...state.metaMinDateData,
+                                      [type]: newOldDate,
+                                  },
+                        };
+                    }
+                }
+
+                if (!isNewDateOld) {
+                    return state;
+                }
+
+                return {
+                    ...state,
+                    metaMinDateData: isNewDateAllOld
+                        ? {
+                              ...state.metaMinDateData,
+                              [type]: date,
+                              all: date,
+                          }
+                        : {
+                              ...state.metaMinDateData,
+                              [type]: date,
+                          },
+                };
+            }
+
+            return {
+                ...state,
+                metaMinDateData: isNewDateAllOld
+                    ? {
+                          ...state.metaMinDateData,
+                          [type]: date,
+                          all: date,
+                      }
+                    : {
+                          ...state.metaMinDateData,
+                          [type]: date,
+                      },
+            };
         }
     }
 };
@@ -296,12 +412,11 @@ const DataProvider: React.FC<Props> = ({ children }) => {
                     JSON.stringify(dataRef.current.transactions),
                 );
             }
-            const minData = {
-                income: new Date('2024-01-21T00:00:00.000Z'),
-                expense: new Date('2024-01-21T00:00:00.000Z'),
-                all: new Date('2024-01-21T00:00:00.000Z'),
-            };
-            localStorage.setItem('metaMinDateData', JSON.stringify(minData));
+
+            localStorage.setItem(
+                'metaMinDateData',
+                JSON.stringify(dataRef.current.metaMinDateData),
+            );
         };
 
         window.addEventListener('beforeunload', handleWindowClose);

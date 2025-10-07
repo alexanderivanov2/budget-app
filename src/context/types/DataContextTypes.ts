@@ -8,10 +8,21 @@ export interface TransferData {
     type: 'income' | 'expense';
 }
 
-export type Action = {
-    type: 'addIncome' | 'addExpense' | 'setDate' | 'deleteTransaction' | 'editTransaction';
-    payload: TransferData;
+export type DataUpdateAction = {
+    type: 'dateUpdate';
+    payload: {
+        type: 'income' | 'expense';
+        date: Date;
+        oldDate?: Date;
+    };
 };
+
+export type Action =
+    | {
+          type: 'addIncome' | 'addExpense' | 'setDate' | 'deleteTransaction' | 'editTransaction';
+          payload: TransferData;
+      }
+    | DataUpdateAction;
 
 export type typeData = {
     id: string;

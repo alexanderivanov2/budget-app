@@ -54,6 +54,14 @@ const TransactionForm: React.FC<Props> = ({ title, formType, formData, submitHan
                     type: 'editTransaction',
                     payload: data as TransferData,
                 });
+                dataDispatch({
+                    type: 'dateUpdate',
+                    payload: {
+                        date: data.date,
+                        type: data.type,
+                        oldDate: formData?.date,
+                    },
+                });
             }
 
             if (submitHandler) {
